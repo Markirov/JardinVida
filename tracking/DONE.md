@@ -1,6 +1,14 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Configuración y Migración de Arquitectura a Firebase** (2026-09-11, Lead Developer / Architect (Antigravity)):
+  1. Instalación del SDK oficial de Firebase (`firebase`).
+  2. Creación de configuración de Hosting (`firebase.json`) y reglas de seguridad para Firestore (`firestore.rules`).
+  3. Inicialización del cliente modular en `src/lib/firebase.js` con soporte para variables de entorno (`.env.example`).
+  4. Scripts añadidos a `package.json` (`npm run deploy`, `npm run deploy:hosting`).
+  5. Build verificado y superado con éxito.
+
 - [x] **Integración de Tienda Online y Simulación de Stock en Tiempo Real** (2026-09-11, Lead Developer / Architect (Antigravity)):
+
   1. Catálogo interactivo de productos de herbolario y dietética (`src/data/products.js`) con stock inicial, categorías y filtros.
   2. Capa de estado global `ShopContext.jsx` con persistencia en `localStorage`, validación de disponibilidad y descuento automático de stock al tramitar pedido.
   3. Carrito de compra reactivo (Slide-Over Drawer `CartDrawer.jsx`) con cálculo dinámico de totales, límites por stock disponible y selector de entrega (Recogida gratis en tienda física C/ Jaime Segarra 51 Alicante vs Envío).

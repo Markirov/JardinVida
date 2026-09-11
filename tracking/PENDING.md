@@ -25,7 +25,9 @@
 
 ## ✅ Completado
 
+- [x] **Configuración y Migración de Arquitectura a Firebase** (2026-09-11, Lead Developer (Antigravity)): SDK, Hosting, Firestore Rules, cliente modular y scripts de despliegue.
 - [x] **Sistema de compra online y catálogo con simulación de stock de tienda** (2026-09-11, Lead Developer (Antigravity)): Catálogo por categorías, carrito reactivo con límites por stock disponible, checkout y mensaje WhatsApp.
 - [x] **Despliegue e integración del Agentic Harness Universal** (2026-09-11, Lead Developer / Architect (Antigravity)): Estructura base (.agents, tracking, scripts, git hooks).
+
 
 
