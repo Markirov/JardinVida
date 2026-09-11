@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# pre-commit — Hook ligero de verificación rápida
+# Previene commits si el código tiene errores de sintaxis o tipos.
+set -euo pipefail
+
+# 1. Si existe npm y tsc en package.json, ejecutar chequeo de tipos
+if [ -f "package.json" ]; then
+  if grep -q '"typescript"' package.json 2>/dev/null; then
+    echo "🔍 [pre-commit] Comprobando tipos TypeScript (tsc --noEmit)..."
+    npx tsc --noEmit
+  fi
+fi
+
+# 2. Si es un proyecto Python, ejecutar comprobación básica si está disponible
+if [ -f "pyproject.toml" ] || [ -f "requirements.txt" ]; then
+  if command -v ruff >/dev/null 2>&1; then
+    echo "🔍 [pre-commit] Comprobando linting Python (ruff check)..."
+    ruff check .
+  elif command -v flake8 >/dev/null 2>&1; then
+    echo "🔍 [pre-commit] Comprobando linting Python (flake8)..."
+    flake8 .
+  fi
+fi
+
+echo "✅ [pre-commit] Verificación rápida superada."
+exit 0
