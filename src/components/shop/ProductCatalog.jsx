@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, RotateCcw, SlidersHorizontal, Info, ShieldCheck, Truck, Store } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { CATEGORIES } from '../../data/products';
@@ -89,7 +89,7 @@ export function ProductCatalog() {
           {CATEGORIES.map(category => (
             <button
               key={category}
-              className={	abBtn }
+              className={`tabBtn ${selectedCategory === category ? 'active' : ''}`}
               onClick={() => setSelectedCategory(category)}
               role="tab"
               aria-selected={selectedCategory === category}
