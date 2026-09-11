@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowUpRight,
@@ -15,8 +15,13 @@ import {
   ShoppingBag,
   Sprout,
   X,
+  Store
 } from 'lucide-react';
 import './styles.css';
+import { ShopProvider, useShop } from './context/ShopContext';
+import { ProductCatalog } from './components/shop/ProductCatalog';
+import { CartDrawer } from './components/shop/CartDrawer';
+import { CheckoutModal } from './components/shop/CheckoutModal';
 
 const whatsapp =
   'https://wa.me/34966355760?text=Hola%2C%20quiero%20pedir%20cita%20en%20Jard%C3%ADn%20de%20la%20Vida';
@@ -69,30 +74,66 @@ const gallery = [
   },
 ];
 
-function App() {
-  const [open, setOpen] = React.useState(false);
+function MainContent() {
+  const [open, setOpen] = useState(false);
+  const { totalCartItems, setIsCartOpen } = useShop();
 
   return (
     <main>
+      {/* Header con acceso directo a la cesta y navegación */}
       <header className="header">
         <a className="brand" href="#inicio" aria-label="Jardín de la Vida">
           <Sprout />
           <span>Jardín de la Vida</span>
         </a>
-        <button className="menu" onClick={() => setOpen(!open)} aria-label="Abrir menu">
-          {open ? <X /> : <Menu />}
-        </button>
+
+        <div className="headerActions">
+          <button
+            className="btnHeaderCart"
+            onClick={() => setIsCartOpen(true)}
+            aria-label={`Ver cesta con ${totalCartItems} productos`}
+          >
+            <ShoppingBag size={20} />
+            <span className="cartLabelText">Cesta</span>
+            {totalCartItems > 0 && (
+              <span className="cartCounterBadge">{totalCartItems}</span>
+            )}
+          </button>
+
+          <button className="menu" onClick={() => setOpen(!open)} aria-label="Abrir menu">
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
+
         <nav className={open ? 'nav open' : 'nav'} onClick={() => setOpen(false)}>
+          <a href="#inicio">Inicio</a>
+          <a href="#tienda" className="navLinkHighlight">
+            🌱 Tienda & Stock
+          </a>
           <a href="#servicios">Servicios</a>
           <a href="#metodo">Método</a>
           <a href="#mundo">Mundo orgánico</a>
           <a href="#contacto">Contacto</a>
           <a className="navCta" href={whatsapp}>
-            Reservar
+            Pedir Cita
           </a>
         </nav>
       </header>
 
+      {/* Botón flotante de carrito para móvil */}
+      {totalCartItems > 0 && (
+        <button
+          className="floatingCartBtn"
+          onClick={() => setIsCartOpen(true)}
+          aria-label="Abrir cesta flotante"
+        >
+          <ShoppingBag size={24} />
+          <span className="floatingCartCount">{totalCartItems}</span>
+          <span className="floatingCartLabel">Ver cesta</span>
+        </button>
+      )}
+
+      {/* Hero Section */}
       <section id="inicio" className="hero">
         <div className="heroMedia" aria-hidden="true">
           <img
@@ -108,11 +149,11 @@ function App() {
             con una guía honesta, cercana y nada aburrida.
           </p>
           <div className="actions">
-            <a className="btn primary" href={whatsapp}>
-              <MessageCircle size={20} /> Pedir cita
+            <a className="btn primary" href="#tienda">
+              <ShoppingBag size={20} /> Ver Tienda & Stock
             </a>
-            <a className="btn secondary" href="#mundo">
-              Explorar el jardín <ArrowUpRight size={19} />
+            <a className="btn secondary" href={whatsapp}>
+              <MessageCircle size={19} /> Pedir cita previa
             </a>
           </div>
         </div>
@@ -123,6 +164,7 @@ function App() {
         </aside>
       </section>
 
+      {/* Manifiesto */}
       <section className="manifesto">
         <p>
           Cultivamos decisiones pequeñas, productos bien elegidos y planes que se pueden
@@ -130,6 +172,10 @@ function App() {
         </p>
       </section>
 
+      {/* SECCIÓN NUEVA: CATÁLOGO Y TIENDA ONLINE CON STOCK */}
+      <ProductCatalog />
+
+      {/* Servicios */}
       <section id="servicios" className="section">
         <div className="sectionHeader">
           <p className="eyebrow">Lo que hacemos</p>
@@ -146,6 +192,7 @@ function App() {
         </div>
       </section>
 
+      {/* Método */}
       <section id="metodo" className="method">
         <div className="methodText">
           <p className="eyebrow">Método Jardín de la Vida</p>
@@ -165,6 +212,7 @@ function App() {
         </div>
       </section>
 
+      {/* Mundo Orgánico */}
       <section id="mundo" className="world">
         <div className="worldIntro">
           <p className="eyebrow">Mundo orgánico</p>
@@ -180,15 +228,16 @@ function App() {
         </div>
       </section>
 
-      <section className="visit">
+      {/* Visita / Cita Previa */}
+      <section className="visit" id="contacto">
         <div>
-          <p className="eyebrow">Cita previa</p>
-        <h2>Ven a Jardín de la Vida y sal con un plan que puedas sostener.</h2>
+          <p className="eyebrow">Cita previa y Tienda Física</p>
+          <h2>Ven a Jardín de la Vida y sal con un plan que puedas sostener.</h2>
           <p>
-            Estamos en C/ Jaime Segarra, 51, Alicante. Puedes llamarnos o escribirnos por WhatsApp para reservar tu cita.
+            Estamos en C/ Jaime Segarra, 51, Alicante. Puedes llamarnos, visitarnos para recoger tus pedidos online o escribirnos por WhatsApp.
           </p>
         </div>
-        <div className="contactBox" id="contacto">
+        <div className="contactBox">
           <p>
             <MapPin /> C/ Jaime Segarra, 51 · Alicante · 03012
           </p>
@@ -196,16 +245,29 @@ function App() {
             <Phone /> 966 355 760
           </p>
           <a className="btn primary full" href={whatsapp}>
-            <Calendar size={20} /> Reservar en Jardín de la Vida
+            <Calendar size={20} /> Reservar Cita en Jardín de la Vida
           </a>
         </div>
       </section>
 
+      {/* Footer */}
       <footer>
         <strong>Jardín de la Vida</strong>
-        <p>Dietética, nutrición y herbolario · Alicante</p>
+        <p>Dietética, nutrición, herbolario y compra online · C/ Jaime Segarra 51, Alicante</p>
       </footer>
+
+      {/* Overlays / Modales */}
+      <CartDrawer />
+      <CheckoutModal />
     </main>
+  );
+}
+
+function App() {
+  return (
+    <ShopProvider>
+      <MainContent />
+    </ShopProvider>
   );
 }
 
