@@ -6,18 +6,19 @@
 - **Nombre:** jardin-vida-web
 - **Stack:** (completar si aplica)
 - **Tracking:** `tracking/` (`DONE.md`, `PENDING.md`, `IDEAS.md`, `AUDIT.md`, `goals/`, `plans/`, `archive/`)
-- **Última actualización:** 2026-09-12 (migración a Harness v2.3.0)
+- **Última actualización:** 2026-09-12 (Harness v2.5.0, sabor `lean` — 3 roles)
 
 ---
 
-## Roles y ámbitos
+## Roles y ámbitos (sabor lean, 3 roles)
 
 | Rol | Ámbito Principal | Regla Dedicada | ¿Modifica Código? |
 |---|---|---|---|
 | **Lead Developer / Architect** | Código fuente del software, infraestructura, base de datos y meta-configuración del harness. | `.agents/rules/lead_developer.md` | **SÍ (Único)** |
-| **Domain & Data Specialist** | Esquemas de datos, compendios JSON/YAML, reglas de negocio, glosarios y documentación técnica. | `.agents/rules/domain_specialist.md` | No |
-| **Product & UX Designer** | Historias de usuario, guías de estilo, copywriting, especificaciones funcionales y assets. | `.agents/rules/product_designer.md` | No |
+| **Domain & Product Owner** | Esquemas de datos, compendios JSON/YAML, reglas de negocio, glosarios, historias de usuario, copy, flujos UX y assets. | `.agents/rules/domain_owner.md` | No |
 | **QA & Security Reviewer** | Auditorías de seguridad, cobertura de tests, detección de regresiones y consistencia de tracking. | `.agents/rules/qa_reviewer.md` | No (audita y reporta) |
+
+**Nota:** este proyecto fusionó Domain & Data Specialist + Product & UX Designer en un solo rol (`domain_owner.md`) por decisión del usuario (prueba de la receta `lean`). Ver "Cuándo separar de nuevo" en `.agents/rules/domain_owner.md` si esto cambia.
 
 ---
 

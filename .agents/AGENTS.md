@@ -1,6 +1,6 @@
 # AGENTS.md — Harness de trabajo (fuente única de protocolo núcleo)
 
-> **Harness v2.3.0** — núcleo sincronizado desde `agentic-framework/`. **Este archivo es 100% núcleo:** no lo edites a mano, se reemplaza entero en `harness update`. Una mejora al núcleo se propone con `harness propose`. Todo lo propio de este proyecto (roles, cabecera Proyecto/Stack, reglas de dominio) vive en **`.agents/PROJECT.md`** — ese archivo nunca lo toca `update`, es tuyo.
+> **Harness v2.5.0** — núcleo sincronizado desde `agentic-framework/`. **Este archivo es 100% núcleo:** no lo edites a mano, se reemplaza entero en `harness update`. Una mejora al núcleo se propone con `harness propose`. Todo lo propio de este proyecto (roles, cabecera Proyecto/Stack, reglas de dominio) vive en **`.agents/PROJECT.md`** — ese archivo nunca lo toca `update`, es tuyo.
 >
 > **Punto de entrada ÚNICO para cualquier agente (IA o humano) que toque este repositorio.** Léelo entero antes de hacer nada, y después `.agents/PROJECT.md` (quién trabaja aquí) y tu regla dedicada.
 > `CLAUDE.md` / `GEMINI.md` / `AGENTS.md` de la raíz son solo punteros a este archivo.
@@ -61,6 +61,28 @@ Un rol que necesita algo de otro lo deja escrito en `PENDING.md` (o en el artefa
 
 ### 1.9 · Concurrencia y colisiones
 Varias sesiones/IAs pueden compartir el working directory. Los **locks en PENDING.md** evitan pisarse. Antes de editar un archivo, comprueba que no tenga lock activo de otra sesión. Para trabajo aislado de riesgo, usa un git worktree.
+
+### 1.10 · Sugerencias al núcleo (HS)
+- **Motivo:** que una mejora de núcleo detectada en un proyecto consumidor llegue al framework sin depender de que el usuario se acuerde de traerla él mismo a una sesión de ese repo.
+- **Cuándo:** si mientras trabajas en este proyecto detectas (o el usuario te pide) una mejora que no es específica de este proyecto sino del harness en sí (protocolo núcleo, mecanismo de `harness.sh`, una receta), escríbela como sugerencia antes de cerrar la tarea.
+- **Dónde:** un archivo nuevo en `<HARNESS_SOURCE>/tracking/harness_suggestions/<fecha>_<este-proyecto>_<slug>.md` (ruta de `HARNESS_SOURCE` en `.agents/HARNESS_SOURCE`). Un archivo por sugerencia — nunca añadas a uno compartido, para no chocar con otra sesión escribiendo a la vez. No hace falta commitear ahí: lo recoge el framework en su propia sesión.
+- **Plantilla:**
+  ```markdown
+  ---
+  proyecto_origen: <nombre de este proyecto>
+  fecha: YYYY-MM-DD
+  tipo: mejora-nucleo | idea-exclusiva
+  estado: pendiente
+  ---
+
+  ## Descripción
+  <qué y por qué>
+
+  ## Diff / snippet (si aplica)
+  <código o prosa concreta de la mejora>
+  ```
+- **`tipo: mejora-nucleo`** — genuinamente reusable por cualquier proyecto (protocolo, CLI, receta). **`tipo: idea-exclusiva`** — específica del dominio de este proyecto pero podría adaptarse a otro futuro (ej. un sistema de datado propio de un proyecto narrativo, reutilizable en otro con otra ambientación); se archiva además en `tracking/IDEAS.md` del framework.
+- **El campo `estado` no lo cambia el proyecto de origen** — lo marca el framework (`pendiente` → `integrada`/`rechazada`) al triarla en su propia sesión.
 
 ---
 
