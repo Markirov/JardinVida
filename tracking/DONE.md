@@ -1,5 +1,12 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Migración a Harness v2.3.0 (split núcleo/proyecto + retro-adopción)** (2026-09-12, Framework Maintainer (Claude Code)):
+  1. `.agents/AGENTS.md` reemplazado por copia exacta del núcleo v2.3.0 (verificado byte a byte).
+  2. Contenido propio (tabla de roles 4-rol: Lead Developer/Architect, Domain & Data Specialist, Product & UX Designer, QA & Security Reviewer; sección Seguridad de Git) movido a `.agents/PROJECT.md` nuevo, no sincronizable.
+  3. `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` (raíz) actualizados para apuntar a ambos archivos.
+  4. Registrado con `harness.sh adopt` — manifest con 2 archivos sincronizados (`.agents/AGENTS.md`, skill `cognitive-orchestration`), 10 propios protegidos (`.agents/PROJECT.md`, las 4 reglas de rol reales, skill `session-onboarding`, HARNESS_* previos si existían).
+  5. `.agents/rules/*.md` de este proyecto usan nombres de rol propios (`domain_specialist.md`, `product_designer.md`, `qa_reviewer.md`) distintos de los genéricos del núcleo — quedan fuera del manifest por diseño, nunca se sobrescriben.
+
 - [x] **Configuración y Migración de Arquitectura a Firebase** (2026-09-11, Lead Developer / Architect (Antigravity)):
   1. Instalación del SDK oficial de Firebase (`firebase`).
   2. Creación de configuración de Hosting (`firebase.json`) y reglas de seguridad para Firestore (`firestore.rules`).
