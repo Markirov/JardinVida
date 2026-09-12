@@ -1,6 +1,13 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Diseño y especificación del Plan de Migración de Inventario y TPV a Firebase Cloud** (2026-09-12, Lead Developer / Architect (Antigravity)):
+  1. Análisis exhaustivo de los 4 ejes: Arquitectura y Calidad de Código, UI/UX/Accesibilidad, Rendimiento/Optimización y Seguridad/Resiliencia.
+  2. Diseño de contratos y esquemas para Firestore (`products`, `orders`, `stock_movements`).
+  3. Solución al cuello de botella de Abarrotes PDV (apagado nocturno del portátil) mediante TPV Web 24/7 en la nube con soporte para lector de código de barras.
+  4. Plan versionado y documentado en `tracking/plans/PLAN_2026-09-12_migracion_integracion_firebase_tpv.md`.
+
 - [x] **Sync a Harness v2.5.0 + conversión a sabor `lean` (3 roles)** (2026-09-12, Framework Maintainer (Claude Code), prueba pedida por el usuario: "haz una prueba restringida a Jardin y Detodo... pásalos a lean"): (1) `harness.sh sync-all` (nuevo en el framework) aplicado de v2.3.0 a v2.5.0 — `.agents/AGENTS.md` reemplazado por el núcleo actual, skill `cognitive-orchestration` sincronizada; el resto (punteros raíz, reglas de rol, skill propia) quedó protegido y sin tocar (comportamiento esperado). (2) Conversión a `lean`: **Domain & Data Specialist** + **Product & UX Designer** fusionados en `.agents/rules/domain_owner.md` (copia de `recipes/lean/domain_owner.md` — el usuario autorizó perder el contenido específico de los dos roles originales, sin uso real todavía); `domain_specialist.md`/`product_designer.md` eliminados. Tabla de roles en `.agents/PROJECT.md` actualizada a 3 roles. Registrado con `harness.sh adopt "E:/Drive/jardin-vida-web" lean tracking` — manifest: 3 sincronizados (`AGENTS.md`, `domain_owner.md`, skill), 8 propios protegidos. `bash verify.sh` verde.
+
 
 - [x] **Migración a Harness v2.3.0 (split núcleo/proyecto + retro-adopción)** (2026-09-12, Framework Maintainer (Claude Code)):
   1. `.agents/AGENTS.md` reemplazado por copia exacta del núcleo v2.3.0 (verificado byte a byte).
