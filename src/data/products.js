@@ -52,6 +52,7 @@
     name: 'Miel Cruda de Azahar de la Vega Baja',
     category: 'Despensa Consciente',
     price: 9.50,
+    oldPrice: 11.90,
     stock: 15,
     description: 'Miel pura sin pasteurizar cosechada en floraciones de naranjos y limoneros de la Vega Baja. Aroma suave y floral.',
     badge: 'Cosecha local',

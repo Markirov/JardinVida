@@ -45,6 +45,7 @@ export function AdminDashboard({ userEmail }) {
   const [appointments, setAppointments] = useState([]);
   const [editedStock, setEditedStock] = useState({});
   const [editedPrice, setEditedPrice] = useState({});
+  const [editedOldPrice, setEditedOldPrice] = useState({});
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [newProduct, setNewProduct] = useState(EMPTY_PRODUCT);
   const [error, setError] = useState(null);
@@ -129,6 +130,18 @@ export function AdminDashboard({ userEmail }) {
     try {
       await updateProductFields(productId, { price: value });
       setEditedPrice((prev) => { const next = { ...prev }; delete next[productId]; return next; });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleSaveOldPrice = async (productId) => {
+    const raw = editedOldPrice[productId];
+    const value = raw === '' ? null : Number(raw);
+    if (raw !== '' && (!Number.isFinite(value) || value <= 0)) return;
+    try {
+      await updateProductFields(productId, { oldPrice: value ?? null });
+      setEditedOldPrice((prev) => { const next = { ...prev }; delete next[productId]; return next; });
     } catch (err) {
       setError(err.message);
     }
@@ -317,6 +330,7 @@ export function AdminDashboard({ userEmail }) {
                     <th>Producto</th>
                     <th>Categoría</th>
                     <th>Precio</th>
+                    <th>Precio anterior</th>
                     <th>Stock</th>
                     <th>Visible</th>
                   </tr>
@@ -335,6 +349,21 @@ export function AdminDashboard({ userEmail }) {
                           />
                           {editedPrice[p.id] !== undefined && Number(editedPrice[p.id]) !== p.price && (
                             <button onClick={() => handleSavePrice(p.id)} aria-label="Guardar precio">
+                              <Save size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="adminInlineEdit">
+                          <input
+                            type="number" step="0.01" min="0"
+                            placeholder="—"
+                            value={editedOldPrice[p.id] ?? p.oldPrice ?? ''}
+                            onChange={(e) => setEditedOldPrice({ ...editedOldPrice, [p.id]: e.target.value })}
+                          />
+                          {editedOldPrice[p.id] !== undefined && editedOldPrice[p.id] !== (p.oldPrice ?? '') && (
+                            <button onClick={() => handleSaveOldPrice(p.id)} aria-label="Guardar precio anterior">
                               <Save size={14} />
                             </button>
                           )}

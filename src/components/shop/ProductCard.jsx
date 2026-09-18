@@ -69,7 +69,12 @@ export function ProductCard({ product }) {
 
         <div className="productFooter">
           <div className="priceBox">
-            <span className="price">{product.price.toFixed(2)}€</span>
+            <div className="priceRow">
+              <span className="price">{product.price.toFixed(2)}€</span>
+              {product.oldPrice && (
+                <span className="oldPrice">{product.oldPrice.toFixed(2)}€</span>
+              )}
+            </div>
             <small className="vat">IVA incl.</small>
           </div>
 

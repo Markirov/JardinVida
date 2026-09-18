@@ -78,6 +78,8 @@ function mapToProduct(row) {
 
   if (errors.length > 0) return { ok: false, row: row.__rowNumber, errors };
 
+  const oldPrice = toNumber(row.PrecioOferta, undefined);
+
   const product = {
     id: `jv-${slugify(row.Codigo)}`,
     barcode: row.Codigo,
@@ -87,6 +89,7 @@ function mapToProduct(row) {
     format: '',
     origin: '',
     price,
+    ...(Number.isFinite(oldPrice) && oldPrice > price ? { oldPrice } : {}),
     costPrice: toNumber(row.PrecioCoste, undefined),
     vatRate: toNumber(row.IVA, 21),
     stock: Math.round(stock),

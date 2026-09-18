@@ -1,13 +1,16 @@
-import React, { useState, useMemo } from 'react';
-import { Search, RotateCcw, SlidersHorizontal, Info, ShieldCheck, Truck, Store } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, RotateCcw, SlidersHorizontal, Info, ShieldCheck, Truck, Store, ChevronDown } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { CATEGORIES } from '../../data/products';
 import { ProductCard } from './ProductCard';
+
+const PAGE_SIZE = 12;
 
 export function ProductCatalog() {
   const { products, resetStock } = useShop();
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
@@ -18,6 +21,13 @@ export function ProductCatalog() {
       return matchesCategory && matchesSearch;
     });
   }, [products, selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [selectedCategory, searchQuery]);
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProducts.length;
 
   return (
     <section id="tienda" className="shopSection">
@@ -102,11 +112,23 @@ export function ProductCatalog() {
 
       {/* Grid de Productos */}
       {filteredProducts.length > 0 ? (
-        <div className="productsGrid">
-          {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <>
+          <div className="productsGrid">
+            {visibleProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          {hasMore && (
+            <div className="loadMoreWrapper">
+              <button
+                className="btn secondary btnLoadMore"
+                onClick={() => setVisibleCount(count => count + PAGE_SIZE)}
+              >
+                <ChevronDown size={18} /> Cargar más ({filteredProducts.length - visibleCount} restantes)
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="emptyCatalog">
           <Info size={32} />

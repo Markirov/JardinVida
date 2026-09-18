@@ -4,14 +4,9 @@
 
 ## 🔴 Alta Prioridad
 
-- [ ] **Rediseño Jardín de la Vida — paquete APROBADO por el usuario (2026-09-19)** [Asignado a Ingeniero Vida (Lead Developer) — enviado por Domain & Product Owner]
+- [ ] **Rediseño Jardín de la Vida — resto del paquete a escala real, pendiente de aprobación aparte** [Sin asignar]
   - Specs de referencia: https://claude.ai/artifact/7deiu1nG3K386FqurmC55p · https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h
-  - (Locks: `src/styles.css`, `src/data/products.js`, `src/components/shop/ProductCard.jsx`, `src/components/shop/ProductCatalog.jsx`)
-  - **1) Paleta** — cambiar 6 valores hex en `src/styles.css:1-13` (mismos nombres de token, solo valor): `--moss` → `#45604A`, `--leaf` → `#7C9471`, `--mint` → `#DCE6CE`, `--sun` → `#C6913F`, `--clay` → `#A15A2C`, `--petal` → `#F0E2CE`.
-  - **2) Precio tachado** — campo `oldPrice` opcional en `src/data/products.js` (y en el shape que suba `import-abarrotes-csv.mjs`/el admin) + render condicional en `ProductCard.jsx`: precio actual destacado, `oldPrice` en pequeño con `text-decoration: line-through` al lado si existe.
-  - **3) Paginación** — `ProductCatalog.jsx` hoy renderiza `filteredProducts.map` sin límite. Añadir `.slice(0, visibleCount)` + botón "Cargar más" (o paginado numérico) sobre el array ya filtrado. Imprescindible antes de subir el catálogo real (~500 SKU vía `import-abarrotes-csv.mjs`, no los 9 del CSV demo).
-  - Detalles de diseño para seguir afinando con Domain & Product Owner si hace falta: color exacto de CTA (si `--clay` pasa a acción principal), formato del badge de descuento, umbral de `visibleCount` / si es "cargar más" o paginado numérico.
-  - **Pendiente de aprobación aparte (no incluido en este envío):** categorías dinámicas, ordenar por precio/nombre, titulares serif, hero en placa crema, buscador con autocompletado, ficha de producto en detalle, fix del listener sin límite en `firestore-service.js:9`, admin sin paginar en `AdminDashboard.jsx:325` — todo referenciado en las specs de arriba.
+  - No incluido en el envío ya aprobado (paleta, precio tachado y paginación — ver Completado): categorías dinámicas, ordenar por precio/nombre, titulares serif, hero en placa crema, buscador con autocompletado, ficha de producto en detalle, fix del listener sin límite en `firestore-service.js:9`, admin sin paginar en `AdminDashboard.jsx:325`.
 
 ## 🟡 Media Prioridad
 
@@ -34,6 +29,7 @@
 
 ## ✅ Completado
 
+- [x] **Rediseño Jardín de la Vida — paquete aprobado (paleta, precio tachado, paginación)** (2026-09-19, Lead Developer (Claude Code)): 6 tokens de color en `styles.css` actualizados a la paleta inspirada en Casa Pià; campo `oldPrice` opcional en `products.js`, `import-abarrotes-csv.mjs` (columna `PrecioOferta`, solo si es mayor que el precio actual) y en el admin (`AdminDashboard.jsx`, columna "Precio anterior" editable), con render condicional en `ProductCard.jsx` (precio tachado al lado); `ProductCatalog.jsx` pagina con `.slice(0, visibleCount)` + botón "Cargar más" de 12 en 12, listo para el catálogo real de ~500 SKU. Verificado end-to-end en local contra Firestore real: paleta visible, precio tachado probado en vivo (9.50€ / 11.90€ tachado) y revertido tras la prueba. Especificado y aprobado por el usuario vía Domain & Product Owner (otra sesión) — resto del paquete (categorías dinámicas, buscador, ficha de producto, etc.) queda pendiente de aprobación aparte.
 - [x] **Sistema de reservas / cita previa (formulario público + gestión en panel admin)** (2026-09-19, Lead Developer (Claude Code)): modal público con selector asesoramiento/recogida de pedido, validación L-V 11:00-15:00 y 17:00-21:00, guardado en Firestore (`appointments`) + confirmación opcional por WhatsApp; pestaña "Reservas" en `/admin` con aviso sonoro/visual y confirmar/rechazar. Verificado end-to-end en producción real.
 - [x] **Fase 5: Despliegue a producción y prueba de concurrencia** (2026-09-19, Lead Developer (Claude Code)): `npm run deploy` publicado en https://jardinvida-eb973.web.app; `/`, `/tpv` y `/admin` verificados en real; prueba de concurrencia (venta simultánea web+TPV del último artículo) confirmó que la transacción atómica evita sobreventa. **Plan de migración Firebase completo (Fases 1-5).**
 - [x] **Fase 4: Panel de Administración (catálogo, pedidos, exportación)** (2026-09-19, Lead Developer (Claude Code)): ruta `/admin`, edición inline de precio/stock con auditoría, alta de productos, histórico de pedidos con aviso sonoro/visual y cambio de estado, aviso de stock mínimo, exportación JSON. Verificado end-to-end en producción real.

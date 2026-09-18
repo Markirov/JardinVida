@@ -1,11 +1,11 @@
 :root {
   --soil: #1f1712;
-  --moss: #244b35;
-  --leaf: #3f7d4b;
-  --mint: #c7e7b4;
-  --sun: #f2b94b;
-  --clay: #b8613d;
-  --petal: #f5d7cd;
+  --moss: #45604A;
+  --leaf: #7C9471;
+  --mint: #DCE6CE;
+  --sun: #C6913F;
+  --clay: #A15A2C;
+  --petal: #F0E2CE;
   --paper: #f8f4e8;
   --white: #fffaf0;
   --muted: #766e62;
@@ -1062,10 +1062,23 @@ footer p {
   flex-direction: column;
 }
 
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
 .price {
   font-size: 22px;
   font-weight: 950;
   color: var(--moss);
+}
+
+.oldPrice {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
 }
 
 .vat {
@@ -1128,6 +1141,18 @@ footer p {
 .emptyCatalog p {
   color: var(--muted);
   margin-bottom: 20px;
+}
+
+.loadMoreWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.btnLoadMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ==========================================================================
