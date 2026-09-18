@@ -1,5 +1,15 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Puesta en producción real: Firestore, Auth, reglas y seed contra `jardinvida-eb973`** (2026-09-18, Lead Developer / Architect (Claude Code)):
+  1. Usuario proporcionó credenciales web reales de Firebase (`jardinvida-eb973`). Creado `.env` local (gitignorado) con `VITE_FIREBASE_*`.
+  2. Base de datos Firestore no existía en el proyecto — creada (`(default)`, modo nativo, región `eur3`). `firestore.rules` tenía BOM que rompía la compilación — corregido.
+  3. Reglas desplegadas a producción. Firebase Auth (Email/Password) inicializado vía `firebase_init` y desplegado. Usuario admin creado (`marcosfenollar@gmail.com`) vía REST Identity Toolkit para firmar el seed y futuros logins de TPV/panel (Fase 3/4).
+  4. **Bug encontrado y corregido:** las reglas originales del plan solo permitían escribir `products`/`stock_movements` a usuarios autenticados, pero el checkout público (visitante anónimo) también escribe ahí al descontar stock — el checkout real fallaba con `permission-denied`. Corregido: un visitante público solo puede `update` un producto si el único cambio es **bajar** `stock` (nunca subirlo ni tocar otro campo), y solo puede `create` en `stock_movements` con `type: 'sale_online'` y `quantityDelta <= 0`. Resto de operaciones sigue exigiendo `isAdmin()`. Redesplegado y verificado.
+  5. `scripts/import-abarrotes-csv.mjs` ampliado: `--commit` ahora se autentica como admin (`ADMIN_EMAIL`/`ADMIN_PASSWORD` en `.env`) antes de escribir, ya que las reglas exigen sesión para altas/bajas completas de catálogo. También se corrigió que el proceso quedaba colgado tras terminar (falta de `process.exit`).
+  6. Seed del catálogo demo (10 productos) ejecutado con éxito contra Firestore real (Fase 1.3 completada).
+  7. Verificado end-to-end en navegador contra producción real: catálogo cargado desde Firestore, checkout como visitante anónimo, transacción atómica de stock (8→7 uds) confirmada en la base real, sin errores de consola tras el fix de reglas.
+  8. **Pendiente de seguridad menor:** la contraseña del usuario admin es débil y quedó en texto plano en `.env` local (gitignorado, nunca comiteado) — recomendable cambiarla desde la consola Firebase cuando se monte el login real de Fase 3/4.
+
 - [x] **Fase 2: Conexión en tiempo real de catálogo y checkout a Firestore** (2026-09-18, Lead Developer / Architect (Claude Code)):
   1. Capa `src/lib/firestore-service.js`: `subscribeToProducts` (listener `onSnapshot` sobre `products`) y `placeOrderTransaction` (transacción atómica `runTransaction`: verifica stock, lo descuenta, registra `stock_movements` y crea el pedido en `orders`, todo indivisible).
   2. `ShopContext.jsx`: si `isFirebaseActive`, el catálogo se sirve en vivo desde Firestore y `checkoutOrder` usa la transacción atómica; si no hay credenciales configuradas (caso actual), cae automáticamente al modo demo local (localStorage) sin cambios de comportamiento.

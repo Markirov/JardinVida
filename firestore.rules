@@ -1,22 +1,41 @@
-﻿rules_version = '2';
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Catálogo de productos: lectura pública, escritura administrada
+
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Catálogo de productos: lectura pública, escritura administrada.
+    // Excepción: un cliente anónimo puede tramitar un pedido, lo que también descuenta
+    // stock en este mismo documento — se permite esa única operación (solo bajar `stock`,
+    // nunca precio/nombre/etc, y nunca subirlo) sin exigir sesión de administrador.
     match /products/{productId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock', 'updatedAt']) &&
+         request.resource.data.stock >= 0 &&
+         request.resource.data.stock < resource.data.stock);
     }
 
     // Pedidos de la tienda: creación pública de pedidos, lectura administrada
     match /orders/{orderId} {
-      allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow create: if request.resource.data.total > 0 && request.resource.data.items.size() > 0;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Histórico de movimientos de stock: un pedido público solo puede registrar
+    // una venta (nunca positiva, nunca de otro tipo); el resto exige administrador.
+    match /stock_movements/{movementId} {
+      allow create: if request.resource.data.type == 'sale_online' && request.resource.data.quantityDelta <= 0;
+      allow read, update, delete: if isAdmin();
     }
 
     // Citas y reservas: creación pública
     match /appointments/{appointmentId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
   }
 }

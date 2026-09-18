@@ -7,8 +7,21 @@
 // Formato esperado (export real de Abarrotes PDV, delimitador ; o , autodetectado):
 //   Codigo;Descripcion;Categoria;PrecioCoste;PrecioVenta;IVA;Existencia;StockMinimo
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+
+function loadEnvFile(path) {
+  if (!existsSync(path)) return;
+  for (const line of readFileSync(path, 'utf-8').split(/\r?\n/)) {
+    const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)\s*$/);
+    if (!match || line.trim().startsWith('#')) continue;
+    const [, key, rawValue] = match;
+    if (process.env[key] === undefined) {
+      process.env[key] = rawValue.replace(/^["']|["']$/g, '');
+    }
+  }
+}
+loadEnvFile(resolve('.env'));
 
 const REQUIRED_HEADERS = ['Codigo', 'Descripcion', 'PrecioVenta', 'Existencia'];
 
@@ -98,6 +111,7 @@ async function commitToFirestore(products) {
 
   const { initializeApp } = await import('firebase/app');
   const { getFirestore, writeBatch, doc } = await import('firebase/firestore');
+  const { getAuth, signInWithEmailAndPassword } = await import('firebase/auth');
 
   const app = initializeApp({
     apiKey: process.env.VITE_FIREBASE_API_KEY,
@@ -107,6 +121,18 @@ async function commitToFirestore(products) {
     messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.VITE_FIREBASE_APP_ID
   });
+
+  // Las reglas exigen request.auth != null para escribir en products; el script se
+  // autentica como admin antes de subir el catálogo (ADMIN_EMAIL / ADMIN_PASSWORD en .env).
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    const auth = getAuth(app);
+    await signInWithEmailAndPassword(auth, process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD);
+  } else {
+    console.error('\n✗ Faltan ADMIN_EMAIL / ADMIN_PASSWORD en .env (las reglas de Firestore exigen usuario autenticado para escribir productos).\n');
+    process.exitCode = 1;
+    return;
+  }
+
   const db = getFirestore(app);
   const batch = writeBatch(db);
   products.forEach((p) => batch.set(doc(db, 'products', p.id), p));
@@ -156,7 +182,9 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(`\n✗ ${err.message}\n`);
-  process.exitCode = 1;
-});
+main()
+  .catch((err) => {
+    console.error(`\n✗ ${err.message}\n`);
+    process.exitCode = 1;
+  })
+  .finally(() => process.exit(process.exitCode ?? 0));

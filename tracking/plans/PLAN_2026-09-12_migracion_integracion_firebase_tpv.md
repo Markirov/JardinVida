@@ -200,12 +200,12 @@ service cloud.firestore {
 ### Fase 1 — Importador y Migración de Datos de Abarrotes PDV
 - [x] 1.1 Diseñar script parser de CSV/Excel exportado de Abarrotes PDV (scripts/import-abarrotes-csv.mjs).
 - [x] 1.2 Mapear campos de Abarrotes (Código, Descripción, Precio, Existencia) al esquema ProductDocument.
-- [ ] 1.3 Subida masiva inicial (seed) a la colección products de Firestore. *(bloqueado: pendiente credenciales reales y export CSV real)*
+- [x] 1.3 Subida masiva inicial (seed) a la colección products de Firestore. *(hecho con CSV demo — pendiente re-ejecutar con export real de Abarrotes cuando esté disponible)*
 
 ### Fase 2 — Conexión en Tiempo Real de la Tienda Web
 - [x] 2.1 Conectar ShopContext.jsx a listeners en vivo onSnapshot de Firestore.
 - [x] 2.2 Reemplazar la simulación local de stock por transacciones atómicas en Firestore al tramitar pedido.
-- [x] 2.3 Registro del pedido en la colección orders de Firestore. *(con fallback automático a modo demo local si no hay credenciales `VITE_FIREBASE_*`; verificado en producción real pendiente de credenciales)*
+- [x] 2.3 Registro del pedido en la colección orders de Firestore. *(con fallback automático a modo demo local si no hay credenciales `VITE_FIREBASE_*`; verificado en producción real contra el proyecto `jardinvida-eb973`)*
 
 ### Fase 3 — Módulo de Punto de Venta (TPV) para Tienda Física
 - [ ] 3.1 Crear vista de mostrador src/components/pos/PosDashboard.jsx.

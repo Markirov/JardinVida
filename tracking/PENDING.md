@@ -4,8 +4,6 @@
 
 ## 🔴 Alta Prioridad
 
-- [ ] **Fase 1.3: Subida masiva real a Firestore (seed)** [Sin asignar]
-  - Requiere credenciales reales `VITE_FIREBASE_*` en `.env` y export CSV real de Abarrotes PDV. Script listo: `node scripts/import-abarrotes-csv.mjs <csv> --commit`.
 - [ ] **Configuración de reservas y formulario interactivo** [Sin asignar]
   - Conectar formulario de contacto/reservas con Firestore (`appointments`) o WhatsApp.
 
@@ -22,12 +20,17 @@
 
 - [ ] **Estructura de Blog / Artículos para SEO local** [Sin asignar]
   - Crear sección dinámica o estática para artículos de nutrición, dietética y posicionamiento en Alicante.
+- [ ] **Re-sembrar catálogo real de Abarrotes PDV** [Sin asignar]
+  - Firestore tiene el catálogo demo ficticio (10 productos). Ejecutar `node scripts/import-abarrotes-csv.mjs <export_real.csv> --commit` con el export real cuando esté disponible.
+- [ ] **Rotar contraseña del usuario admin de Firebase Auth** [Sin asignar]
+  - `marcosfenollar@gmail.com` se creó con contraseña débil en texto plano en `.env` local para firmar el seed. Cambiarla desde la consola Firebase antes de dar acceso real al TPV/panel (Fase 3/4).
 
 
 ---
 
 ## ✅ Completado
 
+- [x] **Puesta en producción real: Firestore, Auth, reglas y seed contra `jardinvida-eb973`** (2026-09-18, Lead Developer (Claude Code)): base Firestore creada, reglas corregidas (checkout público puede bajar stock sin auth) y desplegadas, Auth email/password activo, admin creado, catálogo demo sembrado y verificado en producción real desde el navegador.
 - [x] **Fase 2: Conexión en tiempo real de catálogo y checkout a Firestore** (2026-09-18, Lead Developer (Claude Code)): `firestore-service.js` (listener de stock + transacción atómica de pedido), `ShopContext.jsx` con fallback a modo demo local si no hay credenciales, `CheckoutModal.jsx` async con manejo de errores. Probado end-to-end en navegador.
 - [x] **Fase 1.1/1.2: Importador CSV de Abarrotes PDV + CSV demo ficticio** (2026-09-18, Lead Developer (Claude Code)): `scripts/import-abarrotes-csv.mjs` con validación, mapeo a `ProductDocument` y modo dry-run; CSV demo de 10 productos para pruebas sin acceso al export real.
 - [x] **Configuración y Migración de Arquitectura a Firebase** (2026-09-11, Lead Developer (Antigravity)): SDK, Hosting, Firestore Rules, cliente modular y scripts de despliegue.
