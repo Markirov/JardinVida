@@ -11,6 +11,7 @@
   - 2) Añadir icono por categoría en `CATEGORIES` (`src/data/products.js`) y render en `.tabBtn` (`ProductCatalog.jsx`); importar `Coffee` de `lucide-react` en `main.jsx` (Leaf/Sprout/Flower2/Salad ya están importados).
   - 3) Header: convertir enlace "Tienda & Stock" en desplegable con las 5 categorías, cada una aplica `selectedCategory` directamente.
   - 4) Añadir badge "+35 años cuidando tu salud" junto al `.eyebrow` del hero (`main.jsx:148`) y en el `<footer>` — confirmar cifra exacta de años con el usuario antes de publicar.
+  - 5) Referencia visual "estilo Casa Pià" (usuario la eligió como favorita del análisis de competencia): https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h — ascender `--clay` (terracota) a color de acción principal, añadir campo `oldPrice` opcional en `products.js` + render tachado en `ProductCard.jsx`. Cambios de titulares serif (`DM Serif Display`) y hero en placa crema quedan a la espera de que el usuario confirme si quiere ir tan lejos (cambia el tono de marca, no es solo ajuste de color).
 
 ## 🟡 Media Prioridad
 
