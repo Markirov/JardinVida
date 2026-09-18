@@ -1,5 +1,10 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Spec de rediseño: paleta verde salvia + ocre, navegación por categorías, aviso de confianza y decisión Firebase vs PrestaShop** (2026-09-19, Domain & Product Owner (Claude Code)):
+  1. Informe previo de competencia (6 herbolarios online españoles, 2 en Alicante) usado como base: https://claude.ai/artifact/BPhP8kUwuPeYgUyJihGsiK
+  2. Spec de diseño entregada al usuario: https://claude.ai/artifact/7deiu1nG3K386FqurmC55p — paleta (6 tokens de `styles.css` con nuevo valor hex, mismos nombres), navegación por categorías (icono lucide-react por categoría + desplegable en header, reutilizando el filtro por pestañas ya existente en `ProductCatalog.jsx`), badge "+35 años cuidando tu salud" (hero + footer), y comparativa razonada Firebase (actual) vs PrestaShop con recomendación de **seguir con Firebase** (catálogo pequeño, TPV+stock ya sincronizado a medida, migrar tiraría ese trabajo).
+  3. No se tocó código (rol Domain & Product Owner, sabor lean) — tarea registrada en `tracking/PENDING.md` con lock en los 4 archivos afectados, a la espera de aprobación del usuario y ejecución por Lead Developer (gate §1.2, AGENTS.md).
+
 - [x] **Sistema de reservas / cita previa (formulario público + gestión en panel admin)** (2026-09-19, Lead Developer / Architect (Claude Code)):
   1. Requisitos acordados explícitamente con el usuario antes de codificar: tipo de solicitud dual (asesoramiento / recogida de pedido) con selector, guardado en Firestore + confirmación opcional por WhatsApp, campos fecha/hora preferida + motivo + email + notas, en modal. Horario de atención confirmado por el usuario: **L-V de 11:00 a 15:00 y de 17:00 a 21:00**.
   2. `firestore-service.js` ampliado: `createAppointment` (id legible `CITA-XXXX`, `status: 'pendiente'`), `subscribeToAppointments` (listener en vivo ordenado por `createdAt`), `updateAppointmentStatus`. Colección `appointments` ya contemplada en `firestore.rules` desde el diseño original (`create: true` público, `read/update/delete: isAdmin()`) — sin cambios de reglas necesarios.

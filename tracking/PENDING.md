@@ -4,6 +4,14 @@
 
 ## 🔴 Alta Prioridad
 
+- [ ] **Implementar rediseño de paleta, navegación por categorías y aviso de confianza** [Para Lead Developer — spec lista, pendiente de aprobación del usuario]
+  - Spec completa (tokens de color, mapeo de iconos por categoría, copy y ubicación del aviso "+35 años", comparativa Firebase vs PrestaShop): https://claude.ai/artifact/7deiu1nG3K386FqurmC55p
+  - (Locks: `src/styles.css`, `src/main.jsx`, `src/data/products.js`, `src/components/shop/ProductCatalog.jsx`)
+  - 1) Cambiar 6 valores hex en `src/styles.css:1-13` (`--moss`, `--leaf`, `--mint`, `--sun`, `--clay`, `--petal`) — mismos nombres de token, solo valor.
+  - 2) Añadir icono por categoría en `CATEGORIES` (`src/data/products.js`) y render en `.tabBtn` (`ProductCatalog.jsx`); importar `Coffee` de `lucide-react` en `main.jsx` (Leaf/Sprout/Flower2/Salad ya están importados).
+  - 3) Header: convertir enlace "Tienda & Stock" en desplegable con las 5 categorías, cada una aplica `selectedCategory` directamente.
+  - 4) Añadir badge "+35 años cuidando tu salud" junto al `.eyebrow` del hero (`main.jsx:148`) y en el `<footer>` — confirmar cifra exacta de años con el usuario antes de publicar.
+
 ## 🟡 Media Prioridad
 
 - [ ] **Integración de galería y fotografía real del local** [Sin asignar]
