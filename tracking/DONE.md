@@ -1,5 +1,12 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Fase 2: Conexión en tiempo real de catálogo y checkout a Firestore** (2026-09-18, Lead Developer / Architect (Claude Code)):
+  1. Capa `src/lib/firestore-service.js`: `subscribeToProducts` (listener `onSnapshot` sobre `products`) y `placeOrderTransaction` (transacción atómica `runTransaction`: verifica stock, lo descuenta, registra `stock_movements` y crea el pedido en `orders`, todo indivisible).
+  2. `ShopContext.jsx`: si `isFirebaseActive`, el catálogo se sirve en vivo desde Firestore y `checkoutOrder` usa la transacción atómica; si no hay credenciales configuradas (caso actual), cae automáticamente al modo demo local (localStorage) sin cambios de comportamiento.
+  3. `CheckoutModal.jsx`: `handleSubmit` async con estado de envío y manejo de error (p. ej. condición de carrera de stock insuficiente en la transacción) mostrado como banner en el formulario.
+  4. Probado en navegador end-to-end en modo demo (Firebase no configurado): añadir al carrito, tramitar pedido, descuento de stock 8→7 uds, cesta vaciada, sin errores de consola. `npm run build` y `bash verify.sh` verdes.
+  5. Se añadió `.claude/launch.json` para levantar `npm run dev` desde el Browser pane en próximas sesiones.
+
 - [x] **Fase 1.1/1.2: Importador CSV de Abarrotes PDV + CSV demo ficticio** (2026-09-18, Lead Developer / Architect (Claude Code)):
   1. Script `scripts/import-abarrotes-csv.mjs`: parsea export CSV de Abarrotes PDV (delimitador `;`/`,` autodetectado, decimales con coma, encoding latin1), valida filas y mapea a `ProductDocument` (Firestore).
   2. CSV ficticio de prueba `scripts/fixtures/abarrotes-export-demo.csv` (10 productos, coherentes con catálogo existente en `src/data/products.js`) para demo sin acceso al export real.

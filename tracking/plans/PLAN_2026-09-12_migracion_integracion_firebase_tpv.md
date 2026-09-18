@@ -203,9 +203,9 @@ service cloud.firestore {
 - [ ] 1.3 Subida masiva inicial (seed) a la colección products de Firestore. *(bloqueado: pendiente credenciales reales y export CSV real)*
 
 ### Fase 2 — Conexión en Tiempo Real de la Tienda Web
-- [ ] 2.1 Conectar ShopContext.jsx a listeners en vivo onSnapshot de Firestore.
-- [ ] 2.2 Reemplazar la simulación local de stock por transacciones atómicas en Firestore al tramitar pedido.
-- [ ] 2.3 Registro del pedido en la colección orders de Firestore.
+- [x] 2.1 Conectar ShopContext.jsx a listeners en vivo onSnapshot de Firestore.
+- [x] 2.2 Reemplazar la simulación local de stock por transacciones atómicas en Firestore al tramitar pedido.
+- [x] 2.3 Registro del pedido en la colección orders de Firestore. *(con fallback automático a modo demo local si no hay credenciales `VITE_FIREBASE_*`; verificado en producción real pendiente de credenciales)*
 
 ### Fase 3 — Módulo de Punto de Venta (TPV) para Tienda Física
 - [ ] 3.1 Crear vista de mostrador src/components/pos/PosDashboard.jsx.

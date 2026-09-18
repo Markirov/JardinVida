@@ -1,5 +1,7 @@
 ﻿import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_PRODUCTS } from '../data/products';
+import { isFirebaseActive } from '../lib/firebase';
+import { subscribeToProducts, placeOrderTransaction } from '../lib/firestore-service';
 
 const ShopContext = createContext(null);
 
@@ -31,6 +33,17 @@ export function ShopProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [lastOrder, setLastOrder] = useState(null);
+
+  // Fase 2.1 — con Firebase configurado, el catálogo pasa a ser fuente única de verdad
+  // vía listener en vivo; sin credenciales, se mantiene la simulación local (modo demo).
+  useEffect(() => {
+    if (!isFirebaseActive) return;
+    const unsubscribe = subscribeToProducts(
+      (liveProducts) => setProducts(liveProducts),
+      (err) => console.error('Error escuchando stock en tiempo real desde Firestore:', err)
+    );
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     try {
@@ -106,8 +119,24 @@ export function ShopProvider({ children }) {
     localStorage.removeItem(STORAGE_KEYS.CART);
   };
 
-  const checkoutOrder = ({ customer, shippingMethod, paymentMethod, notes }) => {
+  // Fase 2.2/2.3 — con Firebase activo, el pedido y el descuento de stock se ejecutan en una
+  // transacción atómica en Firestore (evita condiciones de carrera con el TPV físico).
+  // Sin credenciales configuradas, cae al modo demo local (localStorage) tal cual antes.
+  const checkoutOrder = async ({ customer, shippingMethod, paymentMethod, notes }) => {
     if (cart.length === 0) return null;
+
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const shippingCost = shippingMethod === 'envio' ? 4.90 : 0;
+    const total = subtotal + shippingCost;
+
+    if (isFirebaseActive) {
+      const orderData = await placeOrderTransaction({
+        cart, customer, shippingMethod, paymentMethod, notes, shippingCost, subtotal, total
+      });
+      setLastOrder(orderData);
+      clearCart();
+      return orderData;
+    }
 
     // Reducir stock real en la tienda simulada
     setProducts(prevProducts => {
@@ -121,9 +150,6 @@ export function ShopProvider({ children }) {
       });
     });
 
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shippingCost = shippingMethod === 'envio' ? 4.90 : 0;
-    const total = subtotal + shippingCost;
     const orderId = 'JV-' + Math.floor(1000 + Math.random() * 9000);
 
     const orderData = {

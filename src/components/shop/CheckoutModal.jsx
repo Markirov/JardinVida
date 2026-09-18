@@ -27,6 +27,8 @@ export function CheckoutModal() {
   });
 
   const [orderResult, setOrderResult] = useState(null);
+  const [orderError, setOrderError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isCheckoutOpen) return null;
 
@@ -38,20 +40,28 @@ export function CheckoutModal() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (cart.length === 0) return;
+    if (cart.length === 0 || isSubmitting) return;
 
-    const result = checkoutOrder({
-      customer: formData,
-      shippingMethod,
-      paymentMethod,
-      notes: formData.notes
-    });
+    setOrderError(null);
+    setIsSubmitting(true);
+    try {
+      const result = await checkoutOrder({
+        customer: formData,
+        shippingMethod,
+        paymentMethod,
+        notes: formData.notes
+      });
 
-    if (result) {
-      setOrderResult(result);
-      setStep('success');
+      if (result) {
+        setOrderResult(result);
+        setStep('success');
+      }
+    } catch (err) {
+      setOrderError(err.message || 'No se pudo completar el pedido. Inténtalo de nuevo.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,6 +69,7 @@ export function CheckoutModal() {
     setIsCheckoutOpen(false);
     setStep('form');
     setOrderResult(null);
+    setOrderError(null);
   };
 
   const generateWhatsAppUrl = (order) => {
@@ -284,8 +295,14 @@ export function CheckoutModal() {
                 </div>
               </div>
 
-              <button type="submit" className="btn primary full btnSubmitOrder">
-                Confirmar y Reservar Pedido ({total.toFixed(2)}€)
+              {orderError && (
+                <div className="formError" role="alert">
+                  {orderError}
+                </div>
+              )}
+
+              <button type="submit" className="btn primary full btnSubmitOrder" disabled={isSubmitting}>
+                {isSubmitting ? 'Confirmando pedido...' : `Confirmar y Reservar Pedido (${total.toFixed(2)}€)`}
               </button>
             </form>
           </div>
