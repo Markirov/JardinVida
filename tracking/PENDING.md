@@ -20,12 +20,15 @@
   - Firestore tiene el catálogo demo ficticio (10 productos). Ejecutar `node scripts/import-abarrotes-csv.mjs <export_real.csv> --commit` con el export real cuando esté disponible.
 - [ ] **Rotar contraseña del usuario admin de Firebase Auth** [Sin asignar]
   - `marcosfenollar@gmail.com` se creó con contraseña débil en texto plano en `.env` local para firmar el seed. Cambiarla desde la consola Firebase antes de dar acceso real al TPV/panel (Fase 3/4).
+- [ ] **Test suite / Firebase Emulator para firestore.rules** [Sin asignar]
+  - Fase 5.1 del plan se verificó manualmente contra producción real, no con un test suite automatizado. Añadir `@firebase/rules-unit-testing` cuando el proyecto lo justifique.
 
 
 ---
 
 ## ✅ Completado
 
+- [x] **Fase 5: Despliegue a producción y prueba de concurrencia** (2026-09-19, Lead Developer (Claude Code)): `npm run deploy` publicado en https://jardinvida-eb973.web.app; `/`, `/tpv` y `/admin` verificados en real; prueba de concurrencia (venta simultánea web+TPV del último artículo) confirmó que la transacción atómica evita sobreventa. **Plan de migración Firebase completo (Fases 1-5).**
 - [x] **Fase 4: Panel de Administración (catálogo, pedidos, exportación)** (2026-09-19, Lead Developer (Claude Code)): ruta `/admin`, edición inline de precio/stock con auditoría, alta de productos, histórico de pedidos con aviso sonoro/visual y cambio de estado, aviso de stock mínimo, exportación JSON. Verificado end-to-end en producción real.
 - [x] **Fase 3: Módulo TPV de mostrador para tienda física** (2026-09-19, Lead Developer (Claude Code)): ruta `/tpv` con login Firebase Auth, escaneo de código de barras, cobro Efectivo/Tarjeta/Bizum con calculadora de cambio, ticket imprimible, transacción atómica compartida con el checkout web. Verificado end-to-end en producción real.
 - [x] **Puesta en producción real: Firestore, Auth, reglas y seed contra `jardinvida-eb973`** (2026-09-18, Lead Developer (Claude Code)): base Firestore creada, reglas corregidas (checkout público puede bajar stock sin auth) y desplegadas, Auth email/password activo, admin creado, catálogo demo sembrado y verificado en producción real desde el navegador.

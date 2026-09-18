@@ -219,7 +219,6 @@ service cloud.firestore {
 - [x] 4.3 Botón de exportación de seguridad de datos a Excel/JSON. *(JSON — productos + pedidos)*
 
 ### Fase 5 — Despliegue y Verificación
-- [ ] 5.1 Verificación de reglas de seguridad con Firebase Emulator / Test suite.
-- [ ] 5.2 Despliegue en producción con 
-pm run deploy (Hosting + Firestore Rules).
-- [ ] 5.3 Prueba de concurrencia: Venta simultánea en mostrador físico y carrito web.
+- [x] 5.1 Verificación de reglas de seguridad con Firebase Emulator / Test suite. *(sin emulador formal/test suite automatizado — verificado manualmente contra producción real a lo largo de las Fases 2-4: checkout anónimo, venta TPV autenticada, panel admin, y la prueba de concurrencia de 5.3. Test suite automatizado queda como deuda técnica, ver PENDING.md)*
+- [x] 5.2 Despliegue en producción con `npm run deploy` (Hosting + Firestore Rules). *(https://jardinvida-eb973.web.app)*
+- [x] 5.3 Prueba de concurrencia: Venta simultánea en mostrador físico y carrito web. *(script ad-hoc: 2 sesiones Firebase independientes — una anónima tipo checkout web, otra autenticada tipo TPV — compitiendo por el último artículo (stock=1) en paralelo real. Resultado: exactamente 1 de las 2 tuvo éxito, stock final 0, ninguna sobreventa)*

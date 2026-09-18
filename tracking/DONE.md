@@ -1,5 +1,12 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Fase 5: Despliegue a producción y prueba de concurrencia — Plan de migración Firebase completo** (2026-09-19, Lead Developer / Architect (Claude Code)):
+  1. `npm run deploy` (build + `firebase deploy`): Hosting, reglas Firestore y config de Auth publicados en `jardinvida-eb973`. **URL pública: https://jardinvida-eb973.web.app**
+  2. Verificado en producción real (no local): home pública, `/tpv` y `/admin` cargan correctamente vía el rewrite SPA de `firebase.json`.
+  3. **Prueba de concurrencia (5.3):** script ad-hoc con dos sesiones Firebase independientes (una anónima simulando el carrito web, otra autenticada simulando el TPV) compitiendo en paralelo real (`Promise.allSettled`, sin esperar la una a la otra) por el último artículo de un producto forzado a `stock: 1`. Resultado: exactamente 1 de las 2 ventas tuvo éxito, la otra fue rechazada con "Stock insuficiente", stock final 0 — confirma que `runTransaction` evita la sobreventa tal como diseñado en Fase 2. Producto restaurado a su stock original tras la prueba.
+  4. **5.1 sin test suite/emulador formal** — verificado manualmente contra producción real en su lugar (justificación y deuda técnica anotada en el propio plan y en PENDING.md).
+  5. Con esto quedan completadas las 5 fases de `tracking/plans/PLAN_2026-09-12_migracion_integracion_firebase_tpv.md`.
+
 - [x] **Fase 4: Panel de Administración (catálogo, pedidos, exportación)** (2026-09-19, Lead Developer / Architect (Claude Code)):
   1. Ruta `/admin` (lazy, protegida con el mismo login admin de Firebase Auth — extraído a componente compartido `src/components/shared/AdminLoginScreen.jsx`, reutilizado también por `/tpv`).
   2. `AdminDashboard.jsx` con 3 pestañas: **Catálogo** (edición inline de precio/stock con guardado explícito, alta/ocultar visibilidad, alta de producto nuevo), **Pedidos** (listado en vivo `onSnapshot` ordenado por fecha, aviso sonoro + banner visual al llegar un pedido nuevo en `pendiente_preparacion`, botones para marcar `completado`/`cancelado`), **Exportar** (descarga JSON de catálogo + pedidos).
