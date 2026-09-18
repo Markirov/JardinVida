@@ -1,5 +1,11 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Fase 1.1/1.2: Importador CSV de Abarrotes PDV + CSV demo ficticio** (2026-09-18, Lead Developer / Architect (Claude Code)):
+  1. Script `scripts/import-abarrotes-csv.mjs`: parsea export CSV de Abarrotes PDV (delimitador `;`/`,` autodetectado, decimales con coma, encoding latin1), valida filas y mapea a `ProductDocument` (Firestore).
+  2. CSV ficticio de prueba `scripts/fixtures/abarrotes-export-demo.csv` (10 productos, coherentes con catálogo existente en `src/data/products.js`) para demo sin acceso al export real.
+  3. Modo dry-run por defecto (tabla en consola + preview JSON en `scripts/fixtures/abarrotes-import-preview.json`); flag `--commit` sube a Firestore vía SDK cliente si hay credenciales `VITE_FIREBASE_*` en `.env` (pendiente de credenciales reales — Fase 1.3 queda abierta hasta entonces).
+  4. Probado end-to-end contra el CSV demo: 10/10 filas válidas. `bash verify.sh` verde.
+
 - [x] **Diseño y especificación del Plan de Migración de Inventario y TPV a Firebase Cloud** (2026-09-12, Lead Developer / Architect (Antigravity)):
   1. Análisis exhaustivo de los 4 ejes: Arquitectura y Calidad de Código, UI/UX/Accesibilidad, Rendimiento/Optimización y Seguridad/Resiliencia.
   2. Diseño de contratos y esquemas para Firestore (`products`, `orders`, `stock_movements`).

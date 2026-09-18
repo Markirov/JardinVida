@@ -198,9 +198,9 @@ service cloud.firestore {
 ## 5. Tareas (Checklist de Implementación)
 
 ### Fase 1 — Importador y Migración de Datos de Abarrotes PDV
-- [ ] 1.1 Diseñar script parser de CSV/Excel exportado de Abarrotes PDV (scripts/import-abarrotes-csv.mjs).
-- [ ] 1.2 Mapear campos de Abarrotes (Código, Descripción, Precio, Existencia) al esquema ProductDocument.
-- [ ] 1.3 Subida masiva inicial (seed) a la colección products de Firestore.
+- [x] 1.1 Diseñar script parser de CSV/Excel exportado de Abarrotes PDV (scripts/import-abarrotes-csv.mjs).
+- [x] 1.2 Mapear campos de Abarrotes (Código, Descripción, Precio, Existencia) al esquema ProductDocument.
+- [ ] 1.3 Subida masiva inicial (seed) a la colección products de Firestore. *(bloqueado: pendiente credenciales reales y export CSV real)*
 
 ### Fase 2 — Conexión en Tiempo Real de la Tienda Web
 - [ ] 2.1 Conectar ShopContext.jsx a listeners en vivo onSnapshot de Firestore.

@@ -4,8 +4,8 @@
 
 ## 🔴 Alta Prioridad
 
-- [ ] **Fase 1: Importador y parser de inventario Abarrotes PDV (CSV/Excel)** [Sin asignar]
-  - Script para procesar la exportación de Abarrotes y mapear a documentos `products` en Firestore.
+- [ ] **Fase 1.3: Subida masiva real a Firestore (seed)** [Sin asignar]
+  - Requiere credenciales reales `VITE_FIREBASE_*` en `.env` y export CSV real de Abarrotes PDV. Script listo: `node scripts/import-abarrotes-csv.mjs <csv> --commit`.
 - [ ] **Fase 2: Conexión de catálogo web y checkout en tiempo real a Firestore** [Sin asignar]
   - Conectar `ShopContext.jsx` con persistencia y transacciones atómicas en Firestore.
 - [ ] **Configuración de reservas y formulario interactivo** [Sin asignar]
@@ -30,6 +30,7 @@
 
 ## ✅ Completado
 
+- [x] **Fase 1.1/1.2: Importador CSV de Abarrotes PDV + CSV demo ficticio** (2026-09-18, Lead Developer (Claude Code)): `scripts/import-abarrotes-csv.mjs` con validación, mapeo a `ProductDocument` y modo dry-run; CSV demo de 10 productos para pruebas sin acceso al export real.
 - [x] **Configuración y Migración de Arquitectura a Firebase** (2026-09-11, Lead Developer (Antigravity)): SDK, Hosting, Firestore Rules, cliente modular y scripts de despliegue.
 - [x] **Sistema de compra online y catálogo con simulación de stock de tienda** (2026-09-11, Lead Developer (Antigravity)): Catálogo por categorías, carrito reactivo con límites por stock disponible, checkout y mensaje WhatsApp.
 - [x] **Despliegue e integración del Agentic Harness Universal** (2026-09-11, Lead Developer / Architect (Antigravity)): Estructura base (.agents, tracking, scripts, git hooks).
