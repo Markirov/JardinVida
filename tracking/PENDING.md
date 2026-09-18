@@ -11,7 +11,10 @@
   - 2) Añadir icono por categoría en `CATEGORIES` (`src/data/products.js`) y render en `.tabBtn` (`ProductCatalog.jsx`); importar `Coffee` de `lucide-react` en `main.jsx` (Leaf/Sprout/Flower2/Salad ya están importados).
   - 3) Header: convertir enlace "Tienda & Stock" en desplegable con las 5 categorías, cada una aplica `selectedCategory` directamente.
   - 4) Añadir badge "+35 años cuidando tu salud" junto al `.eyebrow` del hero (`main.jsx:148`) y en el `<footer>` — confirmar cifra exacta de años con el usuario antes de publicar.
-  - 5) Referencia visual "estilo Casa Pià" (usuario la eligió como favorita del análisis de competencia): https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h — ascender `--clay` (terracota) a color de acción principal, añadir campo `oldPrice` opcional en `products.js` + render tachado en `ProductCard.jsx`. Cambios de titulares serif (`DM Serif Display`) y hero en placa crema quedan a la espera de que el usuario confirme si quiere ir tan lejos (cambia el tono de marca, no es solo ajuste de color).
+  - 5) Referencia visual y funcional "estilo Casa Pià" (usuario la eligió como favorita del análisis de competencia; v2 añade estructura de navegación real de casapia.com — menú, ordenar, ficha de producto): https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h
+    - Visual: ascender `--clay` (terracota) a color de acción principal, añadir campo `oldPrice` opcional en `products.js` + render tachado en `ProductCard.jsx`. Titulares serif (`DM Serif Display`) y hero en placa crema quedan a la espera de confirmación del usuario (cambia el tono de marca).
+    - Funcional (bajo coste, aplicable ya con 9 SKU): segundo filtro clicable por necesidad a partir del campo `badge` ya existente en `products.js`, junto a `categoryTabs`; control "Ordenar por precio/nombre" (`<select>` + comparador sobre el `useMemo` de `filteredProducts` en `ProductCatalog.jsx`).
+    - Funcional descartado a esta escala: mega-menú de 3 niveles y autocompletado con historial — sobreingeniería para 9 productos, el filtro por necesidad ya cubre el mismo hueco.
 
 ## 🟡 Media Prioridad
 
