@@ -23,8 +23,9 @@ import { ProductCatalog } from './components/shop/ProductCatalog';
 import { CartDrawer } from './components/shop/CartDrawer';
 import { CheckoutModal } from './components/shop/CheckoutModal';
 
-// Módulo TPV (Fase 3): carga bajo demanda, solo cuando se visita /tpv.
+// Módulo TPV (Fase 3) y Panel de Administración (Fase 4): carga bajo demanda.
 const PosApp = lazy(() => import('./components/pos/PosApp'));
+const AdminApp = lazy(() => import('./components/admin/AdminApp'));
 
 const whatsapp =
   'https://wa.me/34966355760?text=Hola%2C%20quiero%20pedir%20cita%20en%20Jard%C3%ADn%20de%20la%20Vida';
@@ -271,6 +272,14 @@ function App() {
     return (
       <Suspense fallback={<div className="posScreen posLoadingScreen">Cargando TPV...</div>}>
         <PosApp />
+      </Suspense>
+    );
+  }
+
+  if (window.location.pathname.startsWith('/admin')) {
+    return (
+      <Suspense fallback={<div className="posScreen posLoadingScreen">Cargando panel...</div>}>
+        <AdminApp />
       </Suspense>
     );
   }

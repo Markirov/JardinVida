@@ -1,4 +1,7 @@
-import { collection, doc, onSnapshot, runTransaction } from 'firebase/firestore';
+import {
+  collection, doc, onSnapshot, runTransaction, query, orderBy, limit,
+  updateDoc, setDoc, deleteDoc
+} from 'firebase/firestore';
 import { db } from './firebase';
 
 // Capa de abstracción sobre el SDK de Firestore (Fase 2.1/2.2/2.3 del plan de migración).
@@ -138,4 +141,76 @@ export async function placePosSaleTransaction({ cart, paymentMethod, cashReceive
     cashReceived: paymentMethod === 'efectivo' ? cashReceived : undefined,
     change: paymentMethod === 'efectivo' ? Math.max(0, (cashReceived ?? 0) - total) : undefined
   };
+}
+
+// ============================
+// Fase 4 — Panel de Administración
+// ============================
+
+function slugify(text) {
+  return text
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+export function subscribeToOrders(onChange, onError, { limitCount = 100 } = {}) {
+  return onSnapshot(
+    query(collection(db, 'orders'), orderBy('date', 'desc'), limit(limitCount)),
+    (snapshot) => onChange(snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    onError
+  );
+}
+
+export async function updateOrderStatus(orderDocId, status) {
+  await updateDoc(doc(db, 'orders', orderDocId), { status });
+}
+
+// Alta de producto nuevo (admin). Genera un id legible a partir del nombre si no se indica.
+export async function createProduct(product) {
+  const id = product.id?.trim() || `jv-${slugify(product.name)}`;
+  await setDoc(doc(db, 'products', id), {
+    ...product,
+    id,
+    isActive: product.isActive ?? true,
+    updatedAt: new Date().toISOString()
+  });
+  return id;
+}
+
+// Edición de campos de un producto existente (precio, nombre, descripción, visibilidad...).
+// Para cambios de stock usar adjustProductStock (deja rastro en stock_movements).
+export async function updateProductFields(productId, fields) {
+  await updateDoc(doc(db, 'products', productId), { ...fields, updatedAt: new Date().toISOString() });
+}
+
+export async function deleteProduct(productId) {
+  await deleteDoc(doc(db, 'products', productId));
+}
+
+// Ajuste manual de stock (recuento, rotura, reposición fuera de un pedido) — transacción
+// atómica que además deja rastro en stock_movements con type 'adjustment'.
+export async function adjustProductStock(productId, newStock, reason) {
+  const productRef = doc(db, 'products', productId);
+  await runTransaction(db, async (transaction) => {
+    const snap = await transaction.get(productRef);
+    if (!snap.exists()) throw new Error('El producto ya no existe.');
+    const previousStock = snap.data().stock ?? 0;
+    if (newStock === previousStock) return;
+
+    transaction.update(productRef, { stock: newStock, updatedAt: new Date().toISOString() });
+
+    const movementRef = doc(collection(db, 'stock_movements'));
+    transaction.set(movementRef, {
+      id: movementRef.id,
+      productId,
+      type: 'adjustment',
+      quantityDelta: newStock - previousStock,
+      previousStock,
+      newStock,
+      reason: reason || '',
+      timestamp: new Date().toISOString()
+    });
+  });
 }

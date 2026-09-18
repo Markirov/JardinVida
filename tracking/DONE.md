@@ -1,5 +1,12 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Fase 4: Panel de Administración (catálogo, pedidos, exportación)** (2026-09-19, Lead Developer / Architect (Claude Code)):
+  1. Ruta `/admin` (lazy, protegida con el mismo login admin de Firebase Auth — extraído a componente compartido `src/components/shared/AdminLoginScreen.jsx`, reutilizado también por `/tpv`).
+  2. `AdminDashboard.jsx` con 3 pestañas: **Catálogo** (edición inline de precio/stock con guardado explícito, alta/ocultar visibilidad, alta de producto nuevo), **Pedidos** (listado en vivo `onSnapshot` ordenado por fecha, aviso sonoro + banner visual al llegar un pedido nuevo en `pendiente_preparacion`, botones para marcar `completado`/`cancelado`), **Exportar** (descarga JSON de catálogo + pedidos).
+  3. `firestore-service.js` ampliado: `subscribeToOrders`, `updateOrderStatus`, `createProduct`, `updateProductFields`, `deleteProduct`, `adjustProductStock` (esta última transaccional, deja rastro en `stock_movements` con `type: 'adjustment'` — mismo patrón que las ventas). Sin cambios en `firestore.rules`: `isAdmin()` ya cubre todo lo necesario.
+  4. **Nota de fidelidad al plan:** el checklist original (Fase 4.2) mencionaba estados "Preparado/Entregado", pero el esquema canónico `OrderDocument` (sección 1.1 del plan) solo declara `'completado' | 'pendiente_preparacion' | 'cancelado'` — se implementó contra el esquema, no contra la prosa suelta del checklist.
+  5. Verificado end-to-end en producción real: edición de stock (7→20 uds confirmado en Firestore), cambio de estado de pedido en vivo, alta de producto nuevo (creado y luego borrado tras la prueba), export JSON sin errores. `npm run build` y `bash verify.sh` verdes.
+
 - [x] **Fase 3: Módulo TPV de mostrador para tienda física** (2026-09-19, Lead Developer / Architect (Claude Code)):
   1. Ruta `/tpv` (sin router — check simple de `location.pathname` en `main.jsx`) con `PosApp` cargado vía `React.lazy` (chunk separado, ~96KB, no afecta la web pública).
   2. `src/lib/auth-service.js`: wrapper de Firebase Auth (login/logout/estado). `PosLogin.jsx` protege el acceso — sin sesión no se ve el TPV.

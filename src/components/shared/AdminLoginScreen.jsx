@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Sprout, LogIn } from 'lucide-react';
 import { loginAdmin } from '../../lib/auth-service';
 
-export function PosLogin() {
+export function AdminLoginScreen({ title, buttonLabel = 'Entrar' }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -26,13 +26,13 @@ export function PosLogin() {
       <form className="posLoginCard" onSubmit={handleSubmit}>
         <div className="posLoginBrand">
           <Sprout size={28} />
-          <span>Jardín de la Vida · TPV</span>
+          <span>{title}</span>
         </div>
 
         <div className="formGroup">
-          <label htmlFor="pos-email">Usuario</label>
+          <label htmlFor="admin-email">Usuario</label>
           <input
-            id="pos-email"
+            id="admin-email"
             type="email"
             required
             autoFocus
@@ -43,9 +43,9 @@ export function PosLogin() {
         </div>
 
         <div className="formGroup">
-          <label htmlFor="pos-password">Contraseña</label>
+          <label htmlFor="admin-password">Contraseña</label>
           <input
-            id="pos-password"
+            id="admin-password"
             type="password"
             required
             value={password}
@@ -61,7 +61,7 @@ export function PosLogin() {
         )}
 
         <button type="submit" className="btn primary full" disabled={isSubmitting}>
-          <LogIn size={18} /> {isSubmitting ? 'Accediendo...' : 'Entrar a caja'}
+          <LogIn size={18} /> {isSubmitting ? 'Accediendo...' : buttonLabel}
         </button>
       </form>
     </div>

@@ -214,9 +214,9 @@ service cloud.firestore {
 - [x] 3.4 Descuento de existencias físico sincronizado en tiempo real con la web. *(misma transacción atómica que Fase 2, verificado en Firestore real)*
 
 ### Fase 4 — Panel de Administración & Gestión de Inventario
-- [ ] 4.1 Pantalla para editar precios, añadir productos nuevos y ajustar stock manualmente.
-- [ ] 4.2 Histórico de pedidos online recibidos con aviso sonoro/visual y cambio de estado a "Preparado/Entregado".
-- [ ] 4.3 Botón de exportación de seguridad de datos a Excel/JSON.
+- [x] 4.1 Pantalla para editar precios, añadir productos nuevos y ajustar stock manualmente. *(ruta `/admin`, edición inline con auditoría en `stock_movements` tipo `adjustment`)*
+- [x] 4.2 Histórico de pedidos online recibidos con aviso sonoro/visual y cambio de estado. *(beep + banner en nuevo pedido `pendiente_preparacion`; estados `completado`/`cancelado` según el esquema canónico de `OrderDocument`, no los literales "Preparado/Entregado" de este bullet — ver nota)*
+- [x] 4.3 Botón de exportación de seguridad de datos a Excel/JSON. *(JSON — productos + pedidos)*
 
 ### Fase 5 — Despliegue y Verificación
 - [ ] 5.1 Verificación de reglas de seguridad con Firebase Emulator / Test suite.

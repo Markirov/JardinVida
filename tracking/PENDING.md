@@ -9,8 +9,6 @@
 
 ## 🟡 Media Prioridad
 
-- [ ] **Fase 4: Panel de Administración y Alertas de Stock** [Sin asignar]
-  - Gestión de catálogo, aviso de pedidos entrantes y control de mínimos de stock.
 - [ ] **Integración de galería y fotografía real del local** [Sin asignar]
   - Sustituir imágenes provisionales por assets fotográficos optimizados de la tienda y herbolario.
 
@@ -28,6 +26,7 @@
 
 ## ✅ Completado
 
+- [x] **Fase 4: Panel de Administración (catálogo, pedidos, exportación)** (2026-09-19, Lead Developer (Claude Code)): ruta `/admin`, edición inline de precio/stock con auditoría, alta de productos, histórico de pedidos con aviso sonoro/visual y cambio de estado, aviso de stock mínimo, exportación JSON. Verificado end-to-end en producción real.
 - [x] **Fase 3: Módulo TPV de mostrador para tienda física** (2026-09-19, Lead Developer (Claude Code)): ruta `/tpv` con login Firebase Auth, escaneo de código de barras, cobro Efectivo/Tarjeta/Bizum con calculadora de cambio, ticket imprimible, transacción atómica compartida con el checkout web. Verificado end-to-end en producción real.
 - [x] **Puesta en producción real: Firestore, Auth, reglas y seed contra `jardinvida-eb973`** (2026-09-18, Lead Developer (Claude Code)): base Firestore creada, reglas corregidas (checkout público puede bajar stock sin auth) y desplegadas, Auth email/password activo, admin creado, catálogo demo sembrado y verificado en producción real desde el navegador.
 - [x] **Fase 2: Conexión en tiempo real de catálogo y checkout a Firestore** (2026-09-18, Lead Developer (Claude Code)): `firestore-service.js` (listener de stock + transacción atómica de pedido), `ShopContext.jsx` con fallback a modo demo local si no hay credenciales, `CheckoutModal.jsx` async con manejo de errores. Probado end-to-end en navegador.

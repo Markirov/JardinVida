@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { subscribeToAuthState } from '../../lib/auth-service';
 import { AdminLoginScreen } from '../shared/AdminLoginScreen';
-import { PosDashboard } from './PosDashboard';
+import { AdminDashboard } from './AdminDashboard';
 
-export default function PosApp() {
+export default function AdminApp() {
   const [user, setUser] = useState(undefined); // undefined = cargando, null = sin sesión
 
   useEffect(() => {
@@ -16,6 +16,6 @@ export default function PosApp() {
   }
 
   return user
-    ? <PosDashboard userEmail={user.email} />
-    : <AdminLoginScreen title="Jardín de la Vida · TPV" buttonLabel="Entrar a caja" />;
+    ? <AdminDashboard userEmail={user.email} />
+    : <AdminLoginScreen title="Jardín de la Vida · Panel Admin" buttonLabel="Entrar al panel" />;
 }
