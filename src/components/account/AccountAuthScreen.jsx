@@ -95,6 +95,10 @@ export function AccountAuthScreen() {
           {mode === 'login' ? <LogIn size={18} /> : <UserPlus size={18} />}
           {isSubmitting ? 'Un momento...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
         </button>
+
+        <a className="btn secondary full" href="/">
+          Cancelar
+        </a>
       </form>
     </div>
   );
