@@ -14,6 +14,7 @@ import {
   Salad,
   ShoppingBag,
   Sprout,
+  User,
   X,
   Store
 } from 'lucide-react';
@@ -24,9 +25,10 @@ import { CartDrawer } from './components/shop/CartDrawer';
 import { CheckoutModal } from './components/shop/CheckoutModal';
 import { AppointmentModal } from './components/shop/AppointmentModal';
 
-// Módulo TPV (Fase 3) y Panel de Administración (Fase 4): carga bajo demanda.
+// Módulo TPV (Fase 3), Panel de Administración (Fase 4) y Mi Cuenta: carga bajo demanda.
 const PosApp = lazy(() => import('./components/pos/PosApp'));
 const AdminApp = lazy(() => import('./components/admin/AdminApp'));
+const AccountApp = lazy(() => import('./components/account/AccountApp'));
 
 const services = [
   {
@@ -120,6 +122,9 @@ function MainContent() {
           <button className="navCta" onClick={() => { setIsAppointmentOpen(true); setOpen(false); }}>
             Pedir Cita
           </button>
+          <a className="navAccountLink" href="/cuenta" onClick={() => setOpen(false)}>
+            <User size={18} /> Acceder
+          </a>
         </nav>
       </header>
 
@@ -280,6 +285,14 @@ function App() {
     return (
       <Suspense fallback={<div className="posScreen posLoadingScreen">Cargando panel...</div>}>
         <AdminApp />
+      </Suspense>
+    );
+  }
+
+  if (window.location.pathname.startsWith('/cuenta')) {
+    return (
+      <Suspense fallback={<div className="posScreen posLoadingScreen">Cargando...</div>}>
+        <AccountApp />
       </Suspense>
     );
   }

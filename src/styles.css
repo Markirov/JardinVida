@@ -101,6 +101,13 @@ a {
   background: var(--sun);
 }
 
+.nav .navAccountLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 250, 240, 0.3);
+}
+
 .menu {
   display: none;
   align-items: center;
@@ -2398,5 +2405,99 @@ footer p {
   border-radius: 8px;
   padding: 8px 10px;
   margin-top: 6px;
+}
+
+/* ==========================================================================
+   MI CUENTA (acceso unificado admin / cliente)
+   ========================================================================== */
+
+.accountModeTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.accountModeTab {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.accountModeTab.active {
+  background: var(--white);
+  color: var(--moss);
+  box-shadow: 0 1px 3px rgba(31, 23, 18, 0.12);
+}
+
+.accountEmptyState {
+  color: var(--muted);
+  padding: 24px 0;
+}
+
+.accountCardList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.accountCard {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.accountCard p {
+  margin: 2px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.accountCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.orderStatusBadge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--moss);
+  white-space: nowrap;
+}
+
+.orderStatusBadge.status-cancelado,
+.orderStatusBadge.status-rechazada {
+  background: var(--petal);
+  color: var(--clay);
+}
+
+.orderStatusBadge.status-completado,
+.orderStatusBadge.status-confirmada {
+  background: var(--mint);
+  color: var(--moss);
+}
+
+.accountProfileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 420px;
+  margin-top: 16px;
 }
 

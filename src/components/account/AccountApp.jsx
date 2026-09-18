@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { subscribeToAuthState, logoutAdmin } from '../../lib/auth-service';
+import { subscribeToAuthState } from '../../lib/auth-service';
 import { checkIsAdmin } from '../../lib/firestore-service';
-import { AdminLoginScreen } from '../shared/AdminLoginScreen';
-import { AdminDashboard } from './AdminDashboard';
+import { AccountAuthScreen } from './AccountAuthScreen';
+import { CustomerDashboard } from './CustomerDashboard';
 
-export default function AdminApp() {
+export default function AccountApp() {
   const [user, setUser] = useState(undefined); // undefined = cargando, null = sin sesión
   const [isAdmin, setIsAdmin] = useState(undefined);
 
@@ -26,23 +26,17 @@ export default function AdminApp() {
   }
 
   if (!user) {
-    return <AdminLoginScreen title="Jardín de la Vida · Panel Admin" buttonLabel="Entrar al panel" />;
+    return <AccountAuthScreen />;
   }
 
   if (isAdmin === undefined) {
     return <div className="posScreen posLoadingScreen">Comprobando acceso...</div>;
   }
 
-  if (!isAdmin) {
-    return (
-      <div className="posLoginScreen">
-        <div className="posLoginCard">
-          <p>Esta cuenta no tiene acceso al panel de administración.</p>
-          <button className="btn secondary full" onClick={logoutAdmin}>Cerrar sesión</button>
-        </div>
-      </div>
-    );
+  if (isAdmin) {
+    window.location.href = '/admin';
+    return <div className="posScreen posLoadingScreen">Redirigiendo al panel admin...</div>;
   }
 
-  return <AdminDashboard userEmail={user.email} />;
+  return <CustomerDashboard user={user} />;
 }

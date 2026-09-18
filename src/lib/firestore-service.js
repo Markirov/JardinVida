@@ -1,8 +1,9 @@
 import {
-  collection, doc, onSnapshot, runTransaction, query, orderBy, limit,
+  collection, doc, getDoc, onSnapshot, runTransaction, query, where, orderBy, limit,
   updateDoc, setDoc, deleteDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { auth } from './auth-service';
 
 // Capa de abstracción sobre el SDK de Firestore (Fase 2.1/2.2/2.3 del plan de migración).
 
@@ -63,6 +64,7 @@ export async function placeOrderTransaction({ cart, customer, shippingMethod, pa
   const orderRef = doc(collection(db, 'orders'));
   const orderId = generateFriendlyOrderId();
   const productRefs = cart.map((item) => doc(db, 'products', item.id));
+  const userId = auth.currentUser?.uid;
 
   await runTransaction(db, async (transaction) => {
     await applyStockDecrement(transaction, cart, productRefs, 'sale_online');
@@ -81,7 +83,8 @@ export async function placeOrderTransaction({ cart, customer, shippingMethod, pa
       shippingCost,
       total,
       status: 'pendiente_preparacion',
-      notes: notes || ''
+      notes: notes || '',
+      ...(userId ? { userId } : {})
     });
   });
 
@@ -227,11 +230,13 @@ function generateFriendlyAppointmentId() {
 export async function createAppointment(data) {
   const appointmentId = generateFriendlyAppointmentId();
   const ref = doc(collection(db, 'appointments'));
+  const userId = auth.currentUser?.uid;
   await setDoc(ref, {
     ...data,
     appointmentId,
     status: 'pendiente',
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    ...(userId ? { userId } : {})
   });
   return appointmentId;
 }
@@ -246,4 +251,51 @@ export function subscribeToAppointments(onChange, onError, { limitCount = 100 } 
 
 export async function updateAppointmentStatus(appointmentDocId, status) {
   await updateDoc(doc(db, 'appointments', appointmentDocId), { status });
+}
+
+// ============================
+// Acceso unificado (admin / ficha de cliente)
+// ============================
+
+export async function checkIsAdmin(uid) {
+  const snap = await getDoc(doc(db, 'admins', uid));
+  return snap.exists();
+}
+
+export function subscribeToMyOrders(uid, onChange, onError) {
+  return onSnapshot(
+    query(collection(db, 'orders'), where('userId', '==', uid)),
+    (snapshot) => {
+      const orders = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      orders.sort((a, b) => (a.date < b.date ? 1 : -1));
+      onChange(orders);
+    },
+    onError
+  );
+}
+
+export function subscribeToMyAppointments(uid, onChange, onError) {
+  return onSnapshot(
+    query(collection(db, 'appointments'), where('userId', '==', uid)),
+    (snapshot) => {
+      const appointments = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      appointments.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+      onChange(appointments);
+    },
+    onError
+  );
+}
+
+export async function getCustomerProfile(uid) {
+  const snap = await getDoc(doc(db, 'customers', uid));
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function saveCustomerProfile(uid, { name, phone, email }) {
+  await setDoc(doc(db, 'customers', uid), {
+    name: name || '',
+    phone: phone || '',
+    email: email || '',
+    updatedAt: new Date().toISOString()
+  });
 }
