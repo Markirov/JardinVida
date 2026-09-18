@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Sprout, LogOut, Package, ClipboardList, Download, Plus, Save, Bell, CheckCircle2, XCircle, CalendarClock
+  Sprout, LogOut, Package, ClipboardList, Download, Upload, Plus, Save, Bell, CheckCircle2, XCircle, CalendarClock, ArrowLeft
 } from 'lucide-react';
 import { logoutAdmin } from '../../lib/auth-service';
 import {
   subscribeToProducts, subscribeToOrders, updateOrderStatus,
   createProduct, updateProductFields, adjustProductStock,
-  subscribeToAppointments, updateAppointmentStatus
+  subscribeToAppointments, updateAppointmentStatus, importProductsBatch
 } from '../../lib/firestore-service';
+import { parseAbarrotesCsv } from '../../lib/abarrotes-csv';
 
 const TABS = [
   { id: 'catalogo', label: 'Catálogo', icon: Package },
@@ -50,6 +51,11 @@ export function AdminDashboard({ userEmail }) {
   const [newProduct, setNewProduct] = useState(EMPTY_PRODUCT);
   const [error, setError] = useState(null);
   const [newOrderAlert, setNewOrderAlert] = useState(null);
+  const [csvPreview, setCsvPreview] = useState(null); // { total, valid, invalid }
+  const [csvError, setCsvError] = useState(null);
+  const [isImportingCsv, setIsImportingCsv] = useState(false);
+  const [csvImportResult, setCsvImportResult] = useState(null);
+  const csvInputRef = useRef(null);
   const knownOrderIds = useRef(null);
   const knownAppointmentIds = useRef(null);
 
@@ -155,6 +161,44 @@ export function AdminDashboard({ userEmail }) {
     }
   };
 
+  const handleCsvFileSelected = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCsvError(null);
+    setCsvImportResult(null);
+    try {
+      // El export de Abarrotes PDV viene en latin1 (acentos/ñ se corrompen en UTF-8).
+      const buffer = await file.arrayBuffer();
+      const raw = new TextDecoder('iso-8859-1').decode(buffer);
+      setCsvPreview(parseAbarrotesCsv(raw));
+    } catch (err) {
+      setCsvError(err.message);
+      setCsvPreview(null);
+    }
+  };
+
+  const handleConfirmCsvImport = async () => {
+    if (!csvPreview || csvPreview.valid.length === 0) return;
+    setIsImportingCsv(true);
+    setCsvError(null);
+    try {
+      await importProductsBatch(csvPreview.valid);
+      setCsvImportResult({ count: csvPreview.valid.length });
+      setCsvPreview(null);
+      if (csvInputRef.current) csvInputRef.current.value = '';
+    } catch (err) {
+      setCsvError(err.message);
+    } finally {
+      setIsImportingCsv(false);
+    }
+  };
+
+  const handleCancelCsvImport = () => {
+    setCsvPreview(null);
+    setCsvError(null);
+    if (csvInputRef.current) csvInputRef.current.value = '';
+  };
+
   const handleCreateProduct = async (e) => {
     e.preventDefault();
     setError(null);
@@ -215,6 +259,9 @@ export function AdminDashboard({ userEmail }) {
           <span>Panel de Administración</span>
         </div>
         <div className="posHeaderRight">
+          <a className="btn secondary" href="/">
+            <ArrowLeft size={18} /> Volver a la web
+          </a>
           {pendingCount > 0 && (
             <span className="adminPendingBadge">
               <Bell size={14} /> {pendingCount} pedido{pendingCount > 1 ? 's' : ''}
@@ -262,10 +309,68 @@ export function AdminDashboard({ userEmail }) {
           <section>
             <div className="adminSectionHeader">
               <h2>Catálogo ({products.length})</h2>
-              <button className="btn primary" onClick={() => setShowNewProduct((v) => !v)}>
-                <Plus size={18} /> Nuevo producto
-              </button>
+              <div className="adminSectionActions">
+                <button
+                  className="btn secondary"
+                  onClick={() => csvInputRef.current?.click()}
+                  disabled={isImportingCsv}
+                >
+                  <Upload size={18} /> Importar CSV
+                </button>
+                <input
+                  ref={csvInputRef}
+                  type="file"
+                  accept=".csv"
+                  className="visuallyHidden"
+                  onChange={handleCsvFileSelected}
+                />
+                <button className="btn primary" onClick={() => setShowNewProduct((v) => !v)}>
+                  <Plus size={18} /> Nuevo producto
+                </button>
+              </div>
             </div>
+
+            {csvImportResult && (
+              <div className="adminLowStockNotice" role="status">
+                <CheckCircle2 size={16} /> {csvImportResult.count} productos importados/actualizados desde el CSV.
+              </div>
+            )}
+
+            {csvError && (
+              <div className="formError adminInlineError" role="alert">{csvError}</div>
+            )}
+
+            {csvPreview && (
+              <div className="csvImportPreview">
+                <h3>Vista previa de la importación</h3>
+                <p>
+                  Filas leídas: {csvPreview.total} · Válidas: {csvPreview.valid.length} · Con errores: {csvPreview.invalid.length}
+                </p>
+                {csvPreview.invalid.length > 0 && (
+                  <ul className="csvImportErrors">
+                    {csvPreview.invalid.slice(0, 10).map((r) => (
+                      <li key={r.row}>Fila {r.row}: {r.errors.join('; ')}</li>
+                    ))}
+                    {csvPreview.invalid.length > 10 && <li>…y {csvPreview.invalid.length - 10} más.</li>}
+                  </ul>
+                )}
+                <p className="accountEmptyState">
+                  Se crearán o actualizarán {csvPreview.valid.length} productos (mismo código de barras = mismo producto, se sobreescribe).
+                </p>
+                <div className="adminCsvActions">
+                  <button
+                    className="btn primary"
+                    onClick={handleConfirmCsvImport}
+                    disabled={isImportingCsv || csvPreview.valid.length === 0}
+                  >
+                    {isImportingCsv ? 'Importando...' : `Confirmar importación (${csvPreview.valid.length})`}
+                  </button>
+                  <button className="btn secondary" onClick={handleCancelCsvImport} disabled={isImportingCsv}>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
 
             {lowStockProducts.length > 0 && (
               <div className="adminLowStockNotice" role="status">

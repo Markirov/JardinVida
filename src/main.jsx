@@ -160,7 +160,7 @@ function MainContent() {
             <a className="btn primary" href="#tienda">
               <ShoppingBag size={20} /> Ver Tienda & Stock
             </a>
-            <button className="btn secondary" onClick={() => setIsAppointmentOpen(true)}>
+            <button className="btn secondary heroSecondary" onClick={() => setIsAppointmentOpen(true)}>
               <MessageCircle size={19} /> Pedir cita previa
             </button>
           </div>

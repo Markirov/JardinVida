@@ -6,9 +6,13 @@
 //
 // Formato esperado (export real de Abarrotes PDV, delimitador ; o , autodetectado):
 //   Codigo;Descripcion;Categoria;PrecioCoste;PrecioVenta;IVA;Existencia;StockMinimo
+//
+// El parseo (parseCsv/mapToProduct/etc.) vive en src/lib/abarrotes-csv.js, compartido
+// con el importador del panel de administración — este script es solo el wrapper de CLI.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { parseAbarrotesCsv } from '../src/lib/abarrotes-csv.js';
 
 function loadEnvFile(path) {
   if (!existsSync(path)) return;
@@ -22,85 +26,6 @@ function loadEnvFile(path) {
   }
 }
 loadEnvFile(resolve('.env'));
-
-const REQUIRED_HEADERS = ['Codigo', 'Descripcion', 'PrecioVenta', 'Existencia'];
-
-function detectDelimiter(headerLine) {
-  return headerLine.split(';').length > headerLine.split(',').length ? ';' : ',';
-}
-
-function parseCsv(raw) {
-  const text = raw.replace(/^﻿/, '').trim();
-  const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
-  if (lines.length < 2) throw new Error('CSV vacío o sin filas de datos.');
-
-  const delimiter = detectDelimiter(lines[0]);
-  const headers = lines[0].split(delimiter).map((h) => h.trim());
-
-  const missing = REQUIRED_HEADERS.filter((h) => !headers.includes(h));
-  if (missing.length > 0) {
-    throw new Error(`Faltan columnas obligatorias en el CSV: ${missing.join(', ')}`);
-  }
-
-  return lines.slice(1).map((line, idx) => {
-    const cells = line.split(delimiter).map((c) => c.trim());
-    const row = {};
-    headers.forEach((h, i) => { row[h] = cells[i] ?? ''; });
-    row.__rowNumber = idx + 2;
-    return row;
-  });
-}
-
-function toNumber(value, fallback = 0) {
-  if (value === undefined || value === '') return fallback;
-  const parsed = Number(value.replace(',', '.'));
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function slugify(text) {
-  return text
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-}
-
-function mapToProduct(row) {
-  const errors = [];
-  if (!row.Codigo) errors.push('Codigo vacío');
-  if (!row.Descripcion) errors.push('Descripcion vacía');
-
-  const price = toNumber(row.PrecioVenta, NaN);
-  if (!Number.isFinite(price) || price <= 0) errors.push(`PrecioVenta inválido ("${row.PrecioVenta}")`);
-
-  const stock = toNumber(row.Existencia, NaN);
-  if (!Number.isFinite(stock) || stock < 0) errors.push(`Existencia inválida ("${row.Existencia}")`);
-
-  if (errors.length > 0) return { ok: false, row: row.__rowNumber, errors };
-
-  const oldPrice = toNumber(row.PrecioOferta, undefined);
-
-  const product = {
-    id: `jv-${slugify(row.Codigo)}`,
-    barcode: row.Codigo,
-    name: row.Descripcion,
-    category: row.Categoria || 'Sin categorizar',
-    description: row.Descripcion,
-    format: '',
-    origin: '',
-    price,
-    ...(Number.isFinite(oldPrice) && oldPrice > price ? { oldPrice } : {}),
-    costPrice: toNumber(row.PrecioCoste, undefined),
-    vatRate: toNumber(row.IVA, 21),
-    stock: Math.round(stock),
-    minStockAlert: Math.round(toNumber(row.StockMinimo, 3)),
-    imageUrl: '',
-    isActive: true,
-    updatedAt: new Date().toISOString()
-  };
-
-  return { ok: true, product };
-}
 
 async function commitToFirestore(products) {
   const requiredEnv = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_PROJECT_ID'];
@@ -154,13 +79,9 @@ async function main() {
   }
 
   const raw = readFileSync(resolve(csvPath), 'latin1');
-  const rows = parseCsv(raw);
-  const results = rows.map(mapToProduct);
+  const { total, valid, invalid } = parseAbarrotesCsv(raw);
 
-  const valid = results.filter((r) => r.ok).map((r) => r.product);
-  const invalid = results.filter((r) => !r.ok);
-
-  console.log(`\nFilas leídas: ${rows.length}`);
+  console.log(`\nFilas leídas: ${total}`);
   console.log(`Válidas: ${valid.length}  |  Con errores: ${invalid.length}\n`);
 
   if (invalid.length > 0) {

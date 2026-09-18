@@ -1,6 +1,6 @@
 import {
   collection, doc, getDoc, onSnapshot, runTransaction, query, where, orderBy, limit,
-  updateDoc, setDoc, deleteDoc
+  updateDoc, setDoc, deleteDoc, writeBatch
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { auth } from './auth-service';
@@ -190,6 +190,18 @@ export async function updateProductFields(productId, fields) {
 
 export async function deleteProduct(productId) {
   await deleteDoc(doc(db, 'products', productId));
+}
+
+// Importación masiva desde CSV (panel admin): sube/actualiza productos en lotes de
+// como máximo 400 escrituras (el límite de Firestore por batch es 500).
+export async function importProductsBatch(products) {
+  const CHUNK_SIZE = 400;
+  for (let i = 0; i < products.length; i += CHUNK_SIZE) {
+    const chunk = products.slice(i, i + CHUNK_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((p) => batch.set(doc(db, 'products', p.id), p));
+    await batch.commit();
+  }
 }
 
 // Ajuste manual de stock (recuento, rotura, reposición fuera de un pedido) — transacción

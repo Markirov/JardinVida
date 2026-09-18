@@ -14,7 +14,7 @@
     "minStockAlert": 3,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.235Z"
+    "updatedAt": "2026-09-18T23:46:48.560Z"
   },
   {
     "id": "jv-8437012345685",
@@ -31,7 +31,7 @@
     "minStockAlert": 4,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345692",
@@ -48,7 +48,7 @@
     "minStockAlert": 6,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345708",
@@ -65,7 +65,7 @@
     "minStockAlert": 5,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345715",
@@ -82,7 +82,7 @@
     "minStockAlert": 5,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345722",
@@ -99,7 +99,7 @@
     "minStockAlert": 4,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345739",
@@ -116,7 +116,7 @@
     "minStockAlert": 8,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345746",
@@ -133,7 +133,7 @@
     "minStockAlert": 6,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345753",
@@ -150,7 +150,7 @@
     "minStockAlert": 5,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   },
   {
     "id": "jv-8437012345760",
@@ -167,6 +167,6 @@
     "minStockAlert": 4,
     "imageUrl": "",
     "isActive": true,
-    "updatedAt": "2026-09-18T21:42:42.239Z"
+    "updatedAt": "2026-09-18T23:46:48.563Z"
   }
 ]
