@@ -4,19 +4,14 @@
 
 ## 🔴 Alta Prioridad
 
-- [ ] **Implementar rediseño de paleta, navegación por categorías y aviso de confianza** [Para Lead Developer — spec lista, pendiente de aprobación del usuario]
-  - Spec completa (tokens de color, mapeo de iconos por categoría, copy y ubicación del aviso "+35 años", comparativa Firebase vs PrestaShop): https://claude.ai/artifact/7deiu1nG3K386FqurmC55p
-  - (Locks: `src/styles.css`, `src/main.jsx`, `src/data/products.js`, `src/components/shop/ProductCatalog.jsx`)
-  - 1) Cambiar 6 valores hex en `src/styles.css:1-13` (`--moss`, `--leaf`, `--mint`, `--sun`, `--clay`, `--petal`) — mismos nombres de token, solo valor.
-  - 2) Añadir icono por categoría en `CATEGORIES` (`src/data/products.js`) y render en `.tabBtn` (`ProductCatalog.jsx`); importar `Coffee` de `lucide-react` en `main.jsx` (Leaf/Sprout/Flower2/Salad ya están importados).
-  - 3) Header: convertir enlace "Tienda & Stock" en desplegable con las 5 categorías, cada una aplica `selectedCategory` directamente.
-  - 4) Añadir badge "+35 años cuidando tu salud" junto al `.eyebrow` del hero (`main.jsx:148`) y en el `<footer>` — confirmar cifra exacta de años con el usuario antes de publicar.
-  - 5) Referencia visual y funcional "estilo Casa Pià" (usuario la eligió como favorita del análisis de competencia; **v3 replanteada a escala real: ~500 SKU importados de Abarrotes PDV, no los 9 del CSV demo**): https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h
-    - Visual: ascender `--clay` (terracota) a color de acción principal, añadir campo `oldPrice` opcional en `products.js` + render tachado en `ProductCard.jsx`. Titulares serif (`DM Serif Display`) y hero en placa crema quedan a la espera de confirmación del usuario (cambia el tono de marca).
-    - Funcional — bajo coste, aplicar ya: **categorías dinámicas** (sustituir `CATEGORIES` fijo por valores únicos del catálogo real, `import-abarrotes-csv.mjs` solo trae `Categoria` como texto plano, sin `badge`/necesidad — el plan anterior de usar `badge` como filtro no sirve para el catálogo real), **paginar/"cargar más"** en `ProductCatalog.jsx` (hoy renderiza todo sin límite), **ordenar por precio/nombre**.
-    - Funcional — alto coste, justificado a esta escala (no descartar como antes): buscador con autocompletado, ficha de producto en detalle.
-    - **Para Lead Developer aparte de esta spec (capa de datos, no diseño):** `subscribeToProducts` en `firestore-service.js:9` hace `onSnapshot` sin `limit` — trae y re-renderiza los 500 productos en cada cambio de stock de cualquiera. `AdminDashboard.jsx:325` renderiza la tabla completa sin buscador ni paginación — inviable para editar entre 500 filas.
-  - 6) Corrección en el veredicto Firebase vs PrestaShop (punto 4 de la spec de rediseño, v1 asumía 9 productos): con Firestore aguantando ~500 documentos sin esfuerzo, el veredicto de seguir con Firebase no cambia, pero el motivo sí — el trabajo real es paginación/consulta de aplicación, no volumen de datos ni plataforma.
+- [ ] **Rediseño Jardín de la Vida — paquete APROBADO por el usuario (2026-09-19)** [Asignado a Ingeniero Vida (Lead Developer) — enviado por Domain & Product Owner]
+  - Specs de referencia: https://claude.ai/artifact/7deiu1nG3K386FqurmC55p · https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h
+  - (Locks: `src/styles.css`, `src/data/products.js`, `src/components/shop/ProductCard.jsx`, `src/components/shop/ProductCatalog.jsx`)
+  - **1) Paleta** — cambiar 6 valores hex en `src/styles.css:1-13` (mismos nombres de token, solo valor): `--moss` → `#45604A`, `--leaf` → `#7C9471`, `--mint` → `#DCE6CE`, `--sun` → `#C6913F`, `--clay` → `#A15A2C`, `--petal` → `#F0E2CE`.
+  - **2) Precio tachado** — campo `oldPrice` opcional en `src/data/products.js` (y en el shape que suba `import-abarrotes-csv.mjs`/el admin) + render condicional en `ProductCard.jsx`: precio actual destacado, `oldPrice` en pequeño con `text-decoration: line-through` al lado si existe.
+  - **3) Paginación** — `ProductCatalog.jsx` hoy renderiza `filteredProducts.map` sin límite. Añadir `.slice(0, visibleCount)` + botón "Cargar más" (o paginado numérico) sobre el array ya filtrado. Imprescindible antes de subir el catálogo real (~500 SKU vía `import-abarrotes-csv.mjs`, no los 9 del CSV demo).
+  - Detalles de diseño para seguir afinando con Domain & Product Owner si hace falta: color exacto de CTA (si `--clay` pasa a acción principal), formato del badge de descuento, umbral de `visibleCount` / si es "cargar más" o paginado numérico.
+  - **Pendiente de aprobación aparte (no incluido en este envío):** categorías dinámicas, ordenar por precio/nombre, titulares serif, hero en placa crema, buscador con autocompletado, ficha de producto en detalle, fix del listener sin límite en `firestore-service.js:9`, admin sin paginar en `AdminDashboard.jsx:325` — todo referenciado en las specs de arriba.
 
 ## 🟡 Media Prioridad
 
