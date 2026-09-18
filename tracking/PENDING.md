@@ -4,9 +4,6 @@
 
 ## 🔴 Alta Prioridad
 
-- [ ] **Configuración de reservas y formulario interactivo** [Sin asignar]
-  - Conectar formulario de contacto/reservas con Firestore (`appointments`) o WhatsApp.
-
 ## 🟡 Media Prioridad
 
 - [ ] **Integración de galería y fotografía real del local** [Sin asignar]
@@ -28,6 +25,7 @@
 
 ## ✅ Completado
 
+- [x] **Sistema de reservas / cita previa (formulario público + gestión en panel admin)** (2026-09-19, Lead Developer (Claude Code)): modal público con selector asesoramiento/recogida de pedido, validación L-V 11:00-15:00 y 17:00-21:00, guardado en Firestore (`appointments`) + confirmación opcional por WhatsApp; pestaña "Reservas" en `/admin` con aviso sonoro/visual y confirmar/rechazar. Verificado end-to-end en producción real.
 - [x] **Fase 5: Despliegue a producción y prueba de concurrencia** (2026-09-19, Lead Developer (Claude Code)): `npm run deploy` publicado en https://jardinvida-eb973.web.app; `/`, `/tpv` y `/admin` verificados en real; prueba de concurrencia (venta simultánea web+TPV del último artículo) confirmó que la transacción atómica evita sobreventa. **Plan de migración Firebase completo (Fases 1-5).**
 - [x] **Fase 4: Panel de Administración (catálogo, pedidos, exportación)** (2026-09-19, Lead Developer (Claude Code)): ruta `/admin`, edición inline de precio/stock con auditoría, alta de productos, histórico de pedidos con aviso sonoro/visual y cambio de estado, aviso de stock mínimo, exportación JSON. Verificado end-to-end en producción real.
 - [x] **Fase 3: Módulo TPV de mostrador para tienda física** (2026-09-19, Lead Developer (Claude Code)): ruta `/tpv` con login Firebase Auth, escaneo de código de barras, cobro Efectivo/Tarjeta/Bizum con calculadora de cambio, ticket imprimible, transacción atómica compartida con el checkout web. Verificado end-to-end en producción real.

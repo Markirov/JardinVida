@@ -214,3 +214,36 @@ export async function adjustProductStock(productId, newStock, reason) {
     });
   });
 }
+
+// ============================
+// Reservas / Citas (appointments)
+// ============================
+
+function generateFriendlyAppointmentId() {
+  return 'CITA-' + Math.floor(1000 + Math.random() * 9000);
+}
+
+// Creación pública (cliente anónimo) de una solicitud de cita o recogida de pedido.
+export async function createAppointment(data) {
+  const appointmentId = generateFriendlyAppointmentId();
+  const ref = doc(collection(db, 'appointments'));
+  await setDoc(ref, {
+    ...data,
+    appointmentId,
+    status: 'pendiente',
+    createdAt: new Date().toISOString()
+  });
+  return appointmentId;
+}
+
+export function subscribeToAppointments(onChange, onError, { limitCount = 100 } = {}) {
+  return onSnapshot(
+    query(collection(db, 'appointments'), orderBy('createdAt', 'desc'), limit(limitCount)),
+    (snapshot) => onChange(snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    onError
+  );
+}
+
+export async function updateAppointmentStatus(appointmentDocId, status) {
+  await updateDoc(doc(db, 'appointments', appointmentDocId), { status });
+}

@@ -77,7 +77,8 @@ a {
   gap: 6px;
 }
 
-.nav a {
+.nav a,
+.nav button.navCta {
   display: inline-flex;
   align-items: center;
   min-height: 42px;
@@ -86,6 +87,9 @@ a {
   font-size: 14px;
   font-weight: 800;
   color: rgba(255, 250, 240, 0.86);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .nav a:hover {
@@ -2360,5 +2364,14 @@ footer p {
 
 .adminLowStockRow td:first-child {
   border-left: 3px solid var(--clay);
+}
+
+.adminAppointmentNotes {
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
 }
 

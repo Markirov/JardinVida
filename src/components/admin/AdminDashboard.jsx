@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Sprout, LogOut, Package, ClipboardList, Download, Plus, Save, Bell, CheckCircle2, XCircle
+  Sprout, LogOut, Package, ClipboardList, Download, Plus, Save, Bell, CheckCircle2, XCircle, CalendarClock
 } from 'lucide-react';
 import { logoutAdmin } from '../../lib/auth-service';
 import {
   subscribeToProducts, subscribeToOrders, updateOrderStatus,
-  createProduct, updateProductFields, adjustProductStock
+  createProduct, updateProductFields, adjustProductStock,
+  subscribeToAppointments, updateAppointmentStatus
 } from '../../lib/firestore-service';
 
 const TABS = [
   { id: 'catalogo', label: 'Catálogo', icon: Package },
   { id: 'pedidos', label: 'Pedidos', icon: ClipboardList },
+  { id: 'reservas', label: 'Reservas', icon: CalendarClock },
   { id: 'exportar', label: 'Exportar', icon: Download }
 ];
 
@@ -40,6 +42,7 @@ export function AdminDashboard({ userEmail }) {
   const [tab, setTab] = useState('catalogo');
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [editedStock, setEditedStock] = useState({});
   const [editedPrice, setEditedPrice] = useState({});
   const [showNewProduct, setShowNewProduct] = useState(false);
@@ -47,6 +50,7 @@ export function AdminDashboard({ userEmail }) {
   const [error, setError] = useState(null);
   const [newOrderAlert, setNewOrderAlert] = useState(null);
   const knownOrderIds = useRef(null);
+  const knownAppointmentIds = useRef(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToProducts(setProducts, (err) => setError(err.message));
@@ -72,6 +76,31 @@ export function AdminDashboard({ userEmail }) {
     );
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToAppointments(
+      (liveAppointments) => {
+        if (knownAppointmentIds.current) {
+          const newPending = liveAppointments.find(
+            (a) => !knownAppointmentIds.current.has(a.id) && a.status === 'pendiente'
+          );
+          if (newPending) {
+            playAlertBeep();
+            setNewOrderAlert(`Nueva solicitud de cita #${newPending.appointmentId} recibida`);
+          }
+        }
+        knownAppointmentIds.current = new Set(liveAppointments.map((a) => a.id));
+        setAppointments(liveAppointments);
+      },
+      (err) => setError(err.message)
+    );
+    return () => unsubscribe();
+  }, []);
+
+  const pendingAppointmentsCount = useMemo(
+    () => appointments.filter((a) => a.status === 'pendiente').length,
+    [appointments]
+  );
 
   const pendingCount = useMemo(
     () => orders.filter((o) => o.status === 'pendiente_preparacion').length,
@@ -139,11 +168,20 @@ export function AdminDashboard({ userEmail }) {
     }
   };
 
+  const handleAppointmentStatus = async (appointmentDocId, status) => {
+    try {
+      await updateAppointmentStatus(appointmentDocId, status);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const exportData = () => {
     const payload = {
       exportedAt: new Date().toISOString(),
       products,
-      orders
+      orders,
+      appointments
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -166,7 +204,12 @@ export function AdminDashboard({ userEmail }) {
         <div className="posHeaderRight">
           {pendingCount > 0 && (
             <span className="adminPendingBadge">
-              <Bell size={14} /> {pendingCount} pendiente{pendingCount > 1 ? 's' : ''}
+              <Bell size={14} /> {pendingCount} pedido{pendingCount > 1 ? 's' : ''}
+            </span>
+          )}
+          {pendingAppointmentsCount > 0 && (
+            <span className="adminPendingBadge">
+              <CalendarClock size={14} /> {pendingAppointmentsCount} cita{pendingAppointmentsCount > 1 ? 's' : ''}
             </span>
           )}
           <span className="posUserBadge">{userEmail}</span>
@@ -362,14 +405,51 @@ export function AdminDashboard({ userEmail }) {
           </section>
         )}
 
+        {tab === 'reservas' && (
+          <section>
+            <h2>Solicitudes de cita ({appointments.length})</h2>
+            <div className="adminOrdersList">
+              {appointments.map((ap) => (
+                <article key={ap.id} className={`adminOrderCard status-${ap.status === 'pendiente' ? 'pendiente_preparacion' : ap.status}`}>
+                  <div className="adminOrderCardHeader">
+                    <strong>#{ap.appointmentId}</strong>
+                    <span className={`adminSourceBadge ${ap.type === 'recogida_pedido' ? 'tienda_tpv' : ''}`}>
+                      {ap.type === 'recogida_pedido' ? 'Recogida de pedido' : 'Asesoramiento'}
+                    </span>
+                    <span className="adminOrderStatus">{ap.status}</span>
+                  </div>
+                  <div className="adminOrderCardBody">
+                    <span>{ap.name} ({ap.phone})</span>
+                    <span>{ap.preferredDate} a las {ap.preferredTime}</span>
+                    {ap.service && <span>{ap.service}</span>}
+                    {ap.orderId && <span>Pedido {ap.orderId}</span>}
+                  </div>
+                  {ap.notes && <p className="adminAppointmentNotes">{ap.notes}</p>}
+                  {ap.status === 'pendiente' && (
+                    <div className="adminOrderActions">
+                      <button className="btn primary" onClick={() => handleAppointmentStatus(ap.id, 'confirmada')}>
+                        <CheckCircle2 size={16} /> Confirmar
+                      </button>
+                      <button className="btn secondary" onClick={() => handleAppointmentStatus(ap.id, 'cancelada')}>
+                        <XCircle size={16} /> Rechazar
+                      </button>
+                    </div>
+                  )}
+                </article>
+              ))}
+              {appointments.length === 0 && <p className="posEmptyTicket">Todavía no hay solicitudes de cita.</p>}
+            </div>
+          </section>
+        )}
+
         {tab === 'exportar' && (
           <section>
             <h2>Exportación de datos</h2>
             <p className="adminExportHint">
-              Descarga una copia de seguridad del catálogo y del histórico de pedidos en formato JSON.
+              Descarga una copia de seguridad del catálogo, pedidos y solicitudes de cita en formato JSON.
             </p>
             <button className="btn primary" onClick={exportData}>
-              <Download size={18} /> Exportar productos + pedidos (JSON)
+              <Download size={18} /> Exportar productos + pedidos + reservas (JSON)
             </button>
           </section>
         )}

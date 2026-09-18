@@ -22,13 +22,11 @@ import { ShopProvider, useShop } from './context/ShopContext';
 import { ProductCatalog } from './components/shop/ProductCatalog';
 import { CartDrawer } from './components/shop/CartDrawer';
 import { CheckoutModal } from './components/shop/CheckoutModal';
+import { AppointmentModal } from './components/shop/AppointmentModal';
 
 // Módulo TPV (Fase 3) y Panel de Administración (Fase 4): carga bajo demanda.
 const PosApp = lazy(() => import('./components/pos/PosApp'));
 const AdminApp = lazy(() => import('./components/admin/AdminApp'));
-
-const whatsapp =
-  'https://wa.me/34966355760?text=Hola%2C%20quiero%20pedir%20cita%20en%20Jard%C3%ADn%20de%20la%20Vida';
 
 const services = [
   {
@@ -80,6 +78,7 @@ const gallery = [
 
 function MainContent() {
   const [open, setOpen] = useState(false);
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const { totalCartItems, setIsCartOpen } = useShop();
 
   return (
@@ -118,9 +117,9 @@ function MainContent() {
           <a href="#metodo">Método</a>
           <a href="#mundo">Mundo orgánico</a>
           <a href="#contacto">Contacto</a>
-          <a className="navCta" href={whatsapp}>
+          <button className="navCta" onClick={() => { setIsAppointmentOpen(true); setOpen(false); }}>
             Pedir Cita
-          </a>
+          </button>
         </nav>
       </header>
 
@@ -156,9 +155,9 @@ function MainContent() {
             <a className="btn primary" href="#tienda">
               <ShoppingBag size={20} /> Ver Tienda & Stock
             </a>
-            <a className="btn secondary" href={whatsapp}>
+            <button className="btn secondary" onClick={() => setIsAppointmentOpen(true)}>
               <MessageCircle size={19} /> Pedir cita previa
-            </a>
+            </button>
           </div>
         </div>
         <aside className="heroBadge">
@@ -248,9 +247,9 @@ function MainContent() {
           <p>
             <Phone /> 966 355 760
           </p>
-          <a className="btn primary full" href={whatsapp}>
+          <button className="btn primary full" onClick={() => setIsAppointmentOpen(true)}>
             <Calendar size={20} /> Reservar Cita en Jardín de la Vida
-          </a>
+          </button>
         </div>
       </section>
 
@@ -263,6 +262,7 @@ function MainContent() {
       {/* Overlays / Modales */}
       <CartDrawer />
       <CheckoutModal />
+      <AppointmentModal isOpen={isAppointmentOpen} onClose={() => setIsAppointmentOpen(false)} />
     </main>
   );
 }

@@ -1,5 +1,15 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Sistema de reservas / cita previa (formulario público + gestión en panel admin)** (2026-09-19, Lead Developer / Architect (Claude Code)):
+  1. Requisitos acordados explícitamente con el usuario antes de codificar: tipo de solicitud dual (asesoramiento / recogida de pedido) con selector, guardado en Firestore + confirmación opcional por WhatsApp, campos fecha/hora preferida + motivo + email + notas, en modal. Horario de atención confirmado por el usuario: **L-V de 11:00 a 15:00 y de 17:00 a 21:00**.
+  2. `firestore-service.js` ampliado: `createAppointment` (id legible `CITA-XXXX`, `status: 'pendiente'`), `subscribeToAppointments` (listener en vivo ordenado por `createdAt`), `updateAppointmentStatus`. Colección `appointments` ya contemplada en `firestore.rules` desde el diseño original (`create: true` público, `read/update/delete: isAdmin()`) — sin cambios de reglas necesarios.
+  3. Nuevo `src/components/shop/AppointmentModal.jsx`: selector de tipo, datos de contacto, fecha (validación L-V vía `isWeekday`, rechaza fin de semana con mensaje de error) y hora (franjas de 30 min dentro del horario de tienda), campo condicional (motivo o nº de pedido), pantalla de éxito con referencia y enlace WhatsApp prellenado (no se abre automáticamente).
+  4. `main.jsx`: los 3 CTA "Pedir Cita" (nav, hero, contacto) pasan de `<a href="wa.me/...">` a `<button onClick={...}>` que abren el modal; `AppointmentModal` montado junto a `CartDrawer`/`CheckoutModal`.
+  5. `AdminDashboard.jsx`: nueva pestaña **Reservas** (listado en vivo, mismo patrón de aviso sonoro/visual que Pedidos al llegar una solicitud `pendiente`, botones Confirmar/Rechazar). Export JSON ampliado para incluir `appointments`.
+  6. `styles.css`: selector `.nav button.navCta` (el CTA de nav dejó de ser `<a>`), estilo `.adminAppointmentNotes`.
+  7. Verificado end-to-end en local contra Firestore real de producción (`jardinvida-eb973`): modal se abre desde CTA, fecha en fin de semana (sábado 2026-09-19) rechazada con el mensaje correcto, solicitud entre semana (lunes 2026-09-21) creada con éxito (`#CITA-7287`), pantalla de éxito y enlace WhatsApp generados, pestaña Reservas del admin muestra la solicitud en vivo, botón Confirmar actualiza el estado a "Confirmada" en tiempo real.
+  8. `npm run build` y `bash verify.sh` verdes.
+
 - [x] **Fase 5: Despliegue a producción y prueba de concurrencia — Plan de migración Firebase completo** (2026-09-19, Lead Developer / Architect (Claude Code)):
   1. `npm run deploy` (build + `firebase deploy`): Hosting, reglas Firestore y config de Auth publicados en `jardinvida-eb973`. **URL pública: https://jardinvida-eb973.web.app**
   2. Verificado en producción real (no local): home pública, `/tpv` y `/admin` cargan correctamente vía el rewrite SPA de `firebase.json`.
