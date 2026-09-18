@@ -1,5 +1,15 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Fase 3: Módulo TPV de mostrador para tienda física** (2026-09-19, Lead Developer / Architect (Claude Code)):
+  1. Ruta `/tpv` (sin router — check simple de `location.pathname` en `main.jsx`) con `PosApp` cargado vía `React.lazy` (chunk separado, ~96KB, no afecta la web pública).
+  2. `src/lib/auth-service.js`: wrapper de Firebase Auth (login/logout/estado). `PosLogin.jsx` protege el acceso — sin sesión no se ve el TPV.
+  3. `PosDashboard.jsx`: barra de escaneo/búsqueda (código de barras o nombre), grid táctil de productos con stock en vivo, ticket con +/-/quitar, selector de pago (Efectivo/Tarjeta/Bizum) con calculadora de cambio, ticket final con `window.print()`.
+  4. `firestore-service.js` ampliado con `placePosSaleTransaction` (comparte la lógica atómica de descuento de stock con el checkout web vía helper `applyStockDecrement`, pero con `source: 'tienda_tpv'`, `status: 'completado'`, movimiento `sale_pos`).
+  5. **Bug de robustez encontrado y corregido:** el envío del formulario de escaneo dependía del submit nativo del `<form>`, que no siempre dispara con lectores/entornos reales — se añadió captura directa `onKeyDown` (Enter) en el input como ruta principal, más fiable para hardware USB real.
+  6. **Bug de seguridad encontrado y corregido:** las reglas de `stock_movements` solo permitían `type == 'sale_online'` (checkout web), bloqueando también al admin autenticado del TPV (`sale_pos`) con `permission-denied`. Corregido: `isAdmin()` autoriza cualquier tipo de movimiento; el visitante público anónimo sigue limitado a `sale_online` con delta negativo. Redesplegado.
+  7. Verificado end-to-end en producción real (`jardinvida-eb973`): login admin, escaneo de 2 códigos de barras distintos, cobro en efectivo con cambio correcto (60€ − 52,60€ = 7,40€), ticket generado, stock descontado en Firestore real (12→10 uds) confirmado por consulta directa a la API.
+  8. `npm run build` y `bash verify.sh` verdes.
+
 - [x] **Puesta en producción real: Firestore, Auth, reglas y seed contra `jardinvida-eb973`** (2026-09-18, Lead Developer / Architect (Claude Code)):
   1. Usuario proporcionó credenciales web reales de Firebase (`jardinvida-eb973`). Creado `.env` local (gitignorado) con `VITE_FIREBASE_*`.
   2. Base de datos Firestore no existía en el proyecto — creada (`(default)`, modo nativo, región `eur3`). `firestore.rules` tenía BOM que rompía la compilación — corregido.

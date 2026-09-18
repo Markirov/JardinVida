@@ -208,10 +208,10 @@ service cloud.firestore {
 - [x] 2.3 Registro del pedido en la colección orders de Firestore. *(con fallback automático a modo demo local si no hay credenciales `VITE_FIREBASE_*`; verificado en producción real contra el proyecto `jardinvida-eb973`)*
 
 ### Fase 3 — Módulo de Punto de Venta (TPV) para Tienda Física
-- [ ] 3.1 Crear vista de mostrador src/components/pos/PosDashboard.jsx.
-- [ ] 3.2 Implementar listener de código de barras USB para escaneo rápido.
-- [ ] 3.3 Pantalla de cobro rápido (Efectivo / Tarjeta / Bizum) con emisión de ticket digital/impresión.
-- [ ] 3.4 Descuento de existencias físico sincronizado en tiempo real con la web.
+- [x] 3.1 Crear vista de mostrador src/components/pos/PosDashboard.jsx. *(ruta `/tpv`, carga lazy, protegida con login Firebase Auth)*
+- [x] 3.2 Implementar listener de código de barras USB para escaneo rápido. *(input dedicado + onKeyDown Enter, no depende del submit nativo del form)*
+- [x] 3.3 Pantalla de cobro rápido (Efectivo / Tarjeta / Bizum) con emisión de ticket digital/impresión. *(calculadora de cambio en efectivo, `window.print()`)*
+- [x] 3.4 Descuento de existencias físico sincronizado en tiempo real con la web. *(misma transacción atómica que Fase 2, verificado en Firestore real)*
 
 ### Fase 4 — Panel de Administración & Gestión de Inventario
 - [ ] 4.1 Pantalla para editar precios, añadir productos nuevos y ajustar stock manualmente.

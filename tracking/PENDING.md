@@ -9,8 +9,6 @@
 
 ## 🟡 Media Prioridad
 
-- [ ] **Fase 3: Módulo de Punto de Venta (TPV) para Tienda Física en mostrador** [Sin asignar]
-  - Interfaz de caja rápida con soporte para lector de código de barras USB y cobros.
 - [ ] **Fase 4: Panel de Administración y Alertas de Stock** [Sin asignar]
   - Gestión de catálogo, aviso de pedidos entrantes y control de mínimos de stock.
 - [ ] **Integración de galería y fotografía real del local** [Sin asignar]
@@ -30,6 +28,7 @@
 
 ## ✅ Completado
 
+- [x] **Fase 3: Módulo TPV de mostrador para tienda física** (2026-09-19, Lead Developer (Claude Code)): ruta `/tpv` con login Firebase Auth, escaneo de código de barras, cobro Efectivo/Tarjeta/Bizum con calculadora de cambio, ticket imprimible, transacción atómica compartida con el checkout web. Verificado end-to-end en producción real.
 - [x] **Puesta en producción real: Firestore, Auth, reglas y seed contra `jardinvida-eb973`** (2026-09-18, Lead Developer (Claude Code)): base Firestore creada, reglas corregidas (checkout público puede bajar stock sin auth) y desplegadas, Auth email/password activo, admin creado, catálogo demo sembrado y verificado en producción real desde el navegador.
 - [x] **Fase 2: Conexión en tiempo real de catálogo y checkout a Firestore** (2026-09-18, Lead Developer (Claude Code)): `firestore-service.js` (listener de stock + transacción atómica de pedido), `ShopContext.jsx` con fallback a modo demo local si no hay credenciales, `CheckoutModal.jsx` async con manejo de errores. Probado end-to-end en navegador.
 - [x] **Fase 1.1/1.2: Importador CSV de Abarrotes PDV + CSV demo ficticio** (2026-09-18, Lead Developer (Claude Code)): `scripts/import-abarrotes-csv.mjs` con validación, mapeo a `ProductDocument` y modo dry-run; CSV demo de 10 productos para pruebas sin acceso al export real.

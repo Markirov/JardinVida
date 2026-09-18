@@ -15,19 +15,12 @@ function generateFriendlyOrderId() {
   return 'JV-' + Math.floor(1000 + Math.random() * 9000);
 }
 
-// Transacción atómica: verifica stock, lo descuenta, registra el movimiento y crea el pedido
-// en una sola operación indivisible (evita vender el mismo último artículo dos veces en simultáneo).
-export async function placeOrderTransaction({ cart, customer, shippingMethod, paymentMethod, notes, shippingCost, subtotal, total }) {
-  if (cart.length === 0) throw new Error('El carrito está vacío.');
-
-  const orderRef = doc(collection(db, 'orders'));
-  const orderId = generateFriendlyOrderId();
-  const productRefs = cart.map((item) => doc(db, 'products', item.id));
-
-  await runTransaction(db, async (transaction) => {
-    const productSnaps = await Promise.all(productRefs.map((ref) => transaction.get(ref)));
-
-    productSnaps.forEach((snap, idx) => {
+// Descuenta stock de cart en una transacción y registra el stock_movement correspondiente.
+// Compartido por el checkout web (Fase 2) y la venta de mostrador TPV (Fase 3).
+function applyStockDecrement(transaction, cart, productRefs, movementType) {
+  const productSnaps = productRefs.map((ref) => transaction.get(ref));
+  return Promise.all(productSnaps).then((snaps) => {
+    snaps.forEach((snap, idx) => {
       const cartItem = cart[idx];
       if (!snap.exists()) {
         throw new Error(`El producto "${cartItem.name}" ya no está disponible.`);
@@ -38,7 +31,7 @@ export async function placeOrderTransaction({ cart, customer, shippingMethod, pa
       }
     });
 
-    productSnaps.forEach((snap, idx) => {
+    snaps.forEach((snap, idx) => {
       const cartItem = cart[idx];
       const previousStock = snap.data().stock ?? 0;
       const newStock = previousStock - cartItem.quantity;
@@ -49,13 +42,27 @@ export async function placeOrderTransaction({ cart, customer, shippingMethod, pa
       transaction.set(movementRef, {
         id: movementRef.id,
         productId: cartItem.id,
-        type: 'sale_online',
+        type: movementType,
         quantityDelta: -cartItem.quantity,
         previousStock,
         newStock,
         timestamp: new Date().toISOString()
       });
     });
+  });
+}
+
+// Transacción atómica: verifica stock, lo descuenta, registra el movimiento y crea el pedido
+// en una sola operación indivisible (evita vender el mismo último artículo dos veces en simultáneo).
+export async function placeOrderTransaction({ cart, customer, shippingMethod, paymentMethod, notes, shippingCost, subtotal, total }) {
+  if (cart.length === 0) throw new Error('El carrito está vacío.');
+
+  const orderRef = doc(collection(db, 'orders'));
+  const orderId = generateFriendlyOrderId();
+  const productRefs = cart.map((item) => doc(db, 'products', item.id));
+
+  await runTransaction(db, async (transaction) => {
+    await applyStockDecrement(transaction, cart, productRefs, 'sale_online');
 
     transaction.set(orderRef, {
       orderId,
@@ -86,5 +93,49 @@ export async function placeOrderTransaction({ cart, customer, shippingMethod, pa
     total,
     paymentMethod,
     notes
+  };
+}
+
+// Venta de mostrador (TPV): misma garantía atómica que el checkout web, pero sin cliente/envío,
+// pagada y completada al instante (source 'tienda_tpv', movimiento 'sale_pos'). Requiere sesión
+// de cajero/admin (las reglas permiten esto vía isAdmin()).
+export async function placePosSaleTransaction({ cart, paymentMethod, cashReceived }) {
+  if (cart.length === 0) throw new Error('El ticket está vacío.');
+
+  const orderRef = doc(collection(db, 'orders'));
+  const orderId = generateFriendlyOrderId();
+  const productRefs = cart.map((item) => doc(db, 'products', item.id));
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal;
+
+  await runTransaction(db, async (transaction) => {
+    await applyStockDecrement(transaction, cart, productRefs, 'sale_pos');
+
+    transaction.set(orderRef, {
+      orderId,
+      source: 'tienda_tpv',
+      date: new Date().toISOString(),
+      items: cart.map(({ id, name, quantity, price, vatRate }) => ({
+        productId: id, name, quantity, price, vatRate: vatRate ?? null
+      })),
+      deliveryMethod: 'venta_directa_caja',
+      paymentMethod,
+      subtotal,
+      shippingCost: 0,
+      total,
+      status: 'completado',
+      notes: ''
+    });
+  });
+
+  return {
+    orderId,
+    date: new Date().toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }),
+    items: cart,
+    paymentMethod,
+    subtotal,
+    total,
+    cashReceived: paymentMethod === 'efectivo' ? cashReceived : undefined,
+    change: paymentMethod === 'efectivo' ? Math.max(0, (cashReceived ?? 0) - total) : undefined
   };
 }

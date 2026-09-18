@@ -25,10 +25,12 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // Histórico de movimientos de stock: un pedido público solo puede registrar
-    // una venta (nunca positiva, nunca de otro tipo); el resto exige administrador.
+    // Histórico de movimientos de stock: un admin/cajero autenticado puede registrar
+    // cualquier tipo (venta TPV, reposición, ajuste); un visitante público anónimo del
+    // checkout web solo puede registrar una venta (nunca positiva). Lectura solo admin.
     match /stock_movements/{movementId} {
-      allow create: if request.resource.data.type == 'sale_online' && request.resource.data.quantityDelta <= 0;
+      allow create: if isAdmin() ||
+        (request.resource.data.type == 'sale_online' && request.resource.data.quantityDelta <= 0);
       allow read, update, delete: if isAdmin();
     }
 
