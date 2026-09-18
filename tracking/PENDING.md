@@ -11,10 +11,12 @@
   - 2) Añadir icono por categoría en `CATEGORIES` (`src/data/products.js`) y render en `.tabBtn` (`ProductCatalog.jsx`); importar `Coffee` de `lucide-react` en `main.jsx` (Leaf/Sprout/Flower2/Salad ya están importados).
   - 3) Header: convertir enlace "Tienda & Stock" en desplegable con las 5 categorías, cada una aplica `selectedCategory` directamente.
   - 4) Añadir badge "+35 años cuidando tu salud" junto al `.eyebrow` del hero (`main.jsx:148`) y en el `<footer>` — confirmar cifra exacta de años con el usuario antes de publicar.
-  - 5) Referencia visual y funcional "estilo Casa Pià" (usuario la eligió como favorita del análisis de competencia; v2 añade estructura de navegación real de casapia.com — menú, ordenar, ficha de producto): https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h
+  - 5) Referencia visual y funcional "estilo Casa Pià" (usuario la eligió como favorita del análisis de competencia; **v3 replanteada a escala real: ~500 SKU importados de Abarrotes PDV, no los 9 del CSV demo**): https://claude.ai/artifact/5Fik53J5RWGqZF1Nfnex7h
     - Visual: ascender `--clay` (terracota) a color de acción principal, añadir campo `oldPrice` opcional en `products.js` + render tachado en `ProductCard.jsx`. Titulares serif (`DM Serif Display`) y hero en placa crema quedan a la espera de confirmación del usuario (cambia el tono de marca).
-    - Funcional (bajo coste, aplicable ya con 9 SKU): segundo filtro clicable por necesidad a partir del campo `badge` ya existente en `products.js`, junto a `categoryTabs`; control "Ordenar por precio/nombre" (`<select>` + comparador sobre el `useMemo` de `filteredProducts` en `ProductCatalog.jsx`).
-    - Funcional descartado a esta escala: mega-menú de 3 niveles y autocompletado con historial — sobreingeniería para 9 productos, el filtro por necesidad ya cubre el mismo hueco.
+    - Funcional — bajo coste, aplicar ya: **categorías dinámicas** (sustituir `CATEGORIES` fijo por valores únicos del catálogo real, `import-abarrotes-csv.mjs` solo trae `Categoria` como texto plano, sin `badge`/necesidad — el plan anterior de usar `badge` como filtro no sirve para el catálogo real), **paginar/"cargar más"** en `ProductCatalog.jsx` (hoy renderiza todo sin límite), **ordenar por precio/nombre**.
+    - Funcional — alto coste, justificado a esta escala (no descartar como antes): buscador con autocompletado, ficha de producto en detalle.
+    - **Para Lead Developer aparte de esta spec (capa de datos, no diseño):** `subscribeToProducts` en `firestore-service.js:9` hace `onSnapshot` sin `limit` — trae y re-renderiza los 500 productos en cada cambio de stock de cualquiera. `AdminDashboard.jsx:325` renderiza la tabla completa sin buscador ni paginación — inviable para editar entre 500 filas.
+  - 6) Corrección en el veredicto Firebase vs PrestaShop (punto 4 de la spec de rediseño, v1 asumía 9 productos): con Firestore aguantando ~500 documentos sin esfuerzo, el veredicto de seguir con Firebase no cambia, pero el motivo sí — el trabajo real es paginación/consulta de aplicación, no volumen de datos ni plataforma.
 
 ## 🟡 Media Prioridad
 
