@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Sprout, LogOut, Package, ClipboardList, Download, Upload, Plus, Save, Bell, CheckCircle2, XCircle, CalendarClock, ArrowLeft
+  Sprout, LogOut, Package, ClipboardList, Download, Upload, Plus, Save, Bell, CheckCircle2, XCircle, CalendarClock, ArrowLeft, RefreshCw, Pencil
 } from 'lucide-react';
 import { logoutAdmin } from '../../lib/auth-service';
 import {
@@ -9,6 +9,7 @@ import {
   subscribeToAppointments, updateAppointmentStatus, importProductsBatch
 } from '../../lib/firestore-service';
 import { parseAbarrotesCsv } from '../../lib/abarrotes-csv';
+import { resolveProductImage, resolveProductImagesBatch, getPlaceholderForCategory } from '../../lib/product-image';
 
 const TABS = [
   { id: 'catalogo', label: 'Catálogo', icon: Package },
@@ -19,7 +20,7 @@ const TABS = [
 
 const EMPTY_PRODUCT = {
   name: '', category: '', price: '', stock: '', barcode: '',
-  format: '', origin: '', description: '', vatRate: '21', minStockAlert: '3'
+  format: '', origin: '', description: '', vatRate: '21', minStockAlert: '3', imageUrl: ''
 };
 
 function playAlertBeep() {
@@ -47,6 +48,8 @@ export function AdminDashboard({ userEmail }) {
   const [editedStock, setEditedStock] = useState({});
   const [editedPrice, setEditedPrice] = useState({});
   const [editedOldPrice, setEditedOldPrice] = useState({});
+  const [editedImage, setEditedImage] = useState({});
+  const [editingImageId, setEditingImageId] = useState(null);
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [newProduct, setNewProduct] = useState(EMPTY_PRODUCT);
   const [error, setError] = useState(null);
@@ -55,6 +58,8 @@ export function AdminDashboard({ userEmail }) {
   const [csvError, setCsvError] = useState(null);
   const [isImportingCsv, setIsImportingCsv] = useState(false);
   const [csvImportResult, setCsvImportResult] = useState(null);
+  const [csvImageProgress, setCsvImageProgress] = useState(null); // { done, total }
+  const [isFetchingNewProductImage, setIsFetchingNewProductImage] = useState(false);
   const csvInputRef = useRef(null);
   const knownOrderIds = useRef(null);
   const knownAppointmentIds = useRef(null);
@@ -153,6 +158,22 @@ export function AdminDashboard({ userEmail }) {
     }
   };
 
+  const handleSaveImage = async (productId) => {
+    const url = editedImage[productId];
+    if (url === undefined) return;
+    try {
+      await updateProductFields(productId, { imageUrl: url });
+      setEditedImage((prev) => { const next = { ...prev }; delete next[productId]; return next; });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleRefetchImage = async (product) => {
+    const url = await resolveProductImage({ barcode: product.barcode, category: product.category });
+    await updateProductFields(product.id, { imageUrl: url });
+  };
+
   const toggleActive = async (product) => {
     try {
       await updateProductFields(product.id, { isActive: !product.isActive });
@@ -182,14 +203,22 @@ export function AdminDashboard({ userEmail }) {
     setIsImportingCsv(true);
     setCsvError(null);
     try {
-      await importProductsBatch(csvPreview.valid);
-      setCsvImportResult({ count: csvPreview.valid.length });
+      setCsvImageProgress({ done: 0, total: csvPreview.valid.length });
+      const images = await resolveProductImagesBatch(csvPreview.valid, {
+        onProgress: (done, total) => setCsvImageProgress({ done, total })
+      });
+      const withImages = csvPreview.valid.map((p, i) => ({ ...p, imageUrl: images[i] }));
+      setCsvImageProgress(null);
+
+      await importProductsBatch(withImages);
+      setCsvImportResult({ count: withImages.length });
       setCsvPreview(null);
       if (csvInputRef.current) csvInputRef.current.value = '';
     } catch (err) {
       setCsvError(err.message);
     } finally {
       setIsImportingCsv(false);
+      setCsvImageProgress(null);
     }
   };
 
@@ -197,6 +226,19 @@ export function AdminDashboard({ userEmail }) {
     setCsvPreview(null);
     setCsvError(null);
     if (csvInputRef.current) csvInputRef.current.value = '';
+  };
+
+  // Autocompleta la imagen al salir del campo código de barras o nombre, solo si el admin
+  // no ha puesto ya una manualmente — nunca sobreescribe una elección manual.
+  const handleAutoFetchNewProductImage = async () => {
+    if (newProduct.imageUrl) return;
+    setIsFetchingNewProductImage(true);
+    try {
+      const url = await resolveProductImage({ barcode: newProduct.barcode, category: newProduct.category });
+      setNewProduct((prev) => (prev.imageUrl ? prev : { ...prev, imageUrl: url }));
+    } finally {
+      setIsFetchingNewProductImage(false);
+    }
   };
 
   const handleCreateProduct = async (e) => {
@@ -363,7 +405,11 @@ export function AdminDashboard({ userEmail }) {
                     onClick={handleConfirmCsvImport}
                     disabled={isImportingCsv || csvPreview.valid.length === 0}
                   >
-                    {isImportingCsv ? 'Importando...' : `Confirmar importación (${csvPreview.valid.length})`}
+                    {isImportingCsv
+                      ? (csvImageProgress
+                        ? `Buscando imágenes... ${csvImageProgress.done}/${csvImageProgress.total}`
+                        : 'Guardando...')
+                      : `Confirmar importación (${csvPreview.valid.length})`}
                   </button>
                   <button className="btn secondary" onClick={handleCancelCsvImport} disabled={isImportingCsv}>
                     Cancelar
@@ -390,7 +436,8 @@ export function AdminDashboard({ userEmail }) {
                   <div className="formGroup">
                     <label>Categoría</label>
                     <input value={newProduct.category}
-                      onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })} />
+                      onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                      onBlur={handleAutoFetchNewProductImage} />
                   </div>
                 </div>
                 <div className="formGrid">
@@ -409,7 +456,8 @@ export function AdminDashboard({ userEmail }) {
                   <div className="formGroup">
                     <label>Código de barras</label>
                     <input value={newProduct.barcode}
-                      onChange={(e) => setNewProduct({ ...newProduct, barcode: e.target.value })} />
+                      onChange={(e) => setNewProduct({ ...newProduct, barcode: e.target.value })}
+                      onBlur={handleAutoFetchNewProductImage} />
                   </div>
                   <div className="formGroup">
                     <label>Formato</label>
@@ -422,6 +470,19 @@ export function AdminDashboard({ userEmail }) {
                   <textarea rows="2" value={newProduct.description}
                     onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
                 </div>
+                <div className="formGroup">
+                  <label>Imagen</label>
+                  <div className="adminImageFieldRow">
+                    {newProduct.imageUrl && (
+                      <img className="adminImagePreview" src={newProduct.imageUrl} alt="" />
+                    )}
+                    <input
+                      value={newProduct.imageUrl}
+                      placeholder={isFetchingNewProductImage ? 'Buscando imagen...' : 'https://... (se autocompleta al salir del código de barras)'}
+                      onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                    />
+                  </div>
+                </div>
                 <button type="submit" className="btn primary full">
                   <Save size={18} /> Guardar producto
                 </button>
@@ -432,6 +493,7 @@ export function AdminDashboard({ userEmail }) {
               <table className="adminTable">
                 <thead>
                   <tr>
+                    <th>Imagen</th>
                     <th>Producto</th>
                     <th>Categoría</th>
                     <th>Precio</th>
@@ -443,6 +505,49 @@ export function AdminDashboard({ userEmail }) {
                 <tbody>
                   {products.map((p) => (
                     <tr key={p.id} className={p.stock <= (p.minStockAlert ?? 0) ? 'adminLowStockRow' : ''}>
+                      <td>
+                        <div className="adminImageCell">
+                          <img
+                            className="adminImageThumb"
+                            src={p.imageUrl || getPlaceholderForCategory(p.category)}
+                            alt=""
+                          />
+                          <div className="adminImageCellActions">
+                            <button
+                              className="adminImageCellBtn"
+                              onClick={() => handleRefetchImage(p)}
+                              aria-label="Volver a buscar imagen automáticamente"
+                              title="Volver a buscar imagen automáticamente"
+                            >
+                              <RefreshCw size={12} />
+                            </button>
+                            <button
+                              className="adminImageCellBtn"
+                              onClick={() => setEditingImageId(editingImageId === p.id ? null : p.id)}
+                              aria-label="Poner imagen manualmente"
+                              title="Poner imagen manualmente"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                          </div>
+                          {editingImageId === p.id && (
+                            <div className="adminImageUrlEdit">
+                              <input
+                                type="text"
+                                placeholder="https://..."
+                                value={editedImage[p.id] ?? p.imageUrl ?? ''}
+                                onChange={(e) => setEditedImage({ ...editedImage, [p.id]: e.target.value })}
+                              />
+                              <button
+                                onClick={async () => { await handleSaveImage(p.id); setEditingImageId(null); }}
+                                aria-label="Guardar imagen"
+                              >
+                                <Save size={12} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
                       <td>{p.name}</td>
                       <td>{p.category}</td>
                       <td>

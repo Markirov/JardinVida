@@ -1,0 +1,301 @@
+Codigo;Descripcion;Categoria;PrecioCoste;PrecioVenta;IVA;Existencia;StockMinimo;PrecioOferta
+8437020000000;Valeriana Ampollas 20ud;Herbolario & Fitoterapia;13,38;22,53;21;30;4;
+8437020000001;Pasiflora Comprimidos 90ud;Herbolario & Fitoterapia;4,45;8,02;21;31;4;
+8437020000002;Equinácea Jarabe 250ml;Herbolario & Fitoterapia;14,97;25,00;21;35;2;
+8437020000003;Cardo Mariano Jarabe 250ml;Herbolario & Fitoterapia;10,82;22,81;21;17;3;
+8437020000004;Própolis Jarabe 250ml;Herbolario & Fitoterapia;4,13;7,77;21;30;3;
+8437020000005;Harpagofito Tintura 50ml;Herbolario & Fitoterapia;12,63;24,22;21;7;5;
+8437020000006;Ginkgo Biloba Extracto Seco 60cap;Herbolario & Fitoterapia;10,59;21,50;21;1;5;
+8437020000007;Diente de León Jarabe 250ml;Herbolario & Fitoterapia;12,36;24,93;21;26;2;30,03
+8437020000008;Cola de Caballo Jarabe 250ml;Herbolario & Fitoterapia;11,96;23,61;21;19;2;
+8437020000009;Boldo Jarabe 250ml;Herbolario & Fitoterapia;6,95;13,11;21;22;5;
+8437020000010;Alcachofa Jarabe 250ml;Herbolario & Fitoterapia;13,33;25,67;21;25;3;
+8437020000011;Regaliz Comprimidos 90ud;Herbolario & Fitoterapia;5,55;10,60;21;0;2;
+8437020000012;Espino Blanco Extracto Seco 60cap;Herbolario & Fitoterapia;7,27;12,24;21;2;3;
+8437020000013;Melisa Comprimidos 90ud;Herbolario & Fitoterapia;8,59;17,94;21;4;3;
+8437020000014;Hipérico Extracto Seco 60cap;Herbolario & Fitoterapia;7,94;15,01;21;18;5;
+8437020000015;Ortiga Verde Tintura 50ml;Herbolario & Fitoterapia;4,84;9,79;21;19;5;
+8437020000016;Fucus Tintura 50ml;Herbolario & Fitoterapia;4,96;8,62;21;19;4;
+8437020000017;Ginseng Rojo Ampollas 20ud;Herbolario & Fitoterapia;9,29;17,83;21;32;4;
+8437020000018;Rhodiola Jarabe 250ml;Herbolario & Fitoterapia;13,18;24,75;21;32;2;
+8437020000019;Uña de Gato Jarabe 250ml;Herbolario & Fitoterapia;8,52;16,72;21;31;4;
+8437020000020;Valeriana Premium Comprimidos 90ud;Herbolario & Fitoterapia;9,56;19,07;21;4;2;
+8437020000021;Pasiflora Premium Tintura 50ml;Herbolario & Fitoterapia;10,69;19,14;21;2;3;
+8437020000022;Equinácea Premium Extracto Seco 60cap;Herbolario & Fitoterapia;13,50;23,24;21;0;3;
+8437020000023;Cardo Mariano Premium Ampollas 20ud;Herbolario & Fitoterapia;8,78;18,73;21;11;4;
+8437020000024;Própolis Premium Comprimidos 90ud;Herbolario & Fitoterapia;6,82;11,93;21;9;4;
+8437020000025;Harpagofito Premium Jarabe 250ml;Herbolario & Fitoterapia;4,50;9,18;21;6;3;
+8437020000026;Ginkgo Biloba Premium Extracto Seco 60cap;Herbolario & Fitoterapia;9,64;16,81;21;16;2;
+8437020000027;Diente de León Premium Ampollas 20ud;Herbolario & Fitoterapia;12,68;22,15;21;12;4;
+8437020000028;Cola de Caballo Premium Ampollas 20ud;Herbolario & Fitoterapia;6,72;12,53;21;8;2;
+8437020000029;Boldo Premium Comprimidos 90ud;Herbolario & Fitoterapia;6,86;13,30;21;17;4;
+8437020000030;Alcachofa Premium Extracto Seco 60cap;Herbolario & Fitoterapia;6,61;11,78;21;12;4;
+8437020000031;Regaliz Premium Tintura 50ml;Herbolario & Fitoterapia;8,16;14,30;21;7;4;
+8437020000032;Espino Blanco Premium Jarabe 250ml;Herbolario & Fitoterapia;4,89;8,21;21;15;5;
+8437020000033;Melisa Premium Extracto Seco 60cap;Herbolario & Fitoterapia;10,10;18,82;21;9;4;
+8437020000034;Hipérico Premium Extracto Seco 60cap;Herbolario & Fitoterapia;8,58;14,49;21;3;3;
+8437020000035;Ortiga Verde Premium Ampollas 20ud;Herbolario & Fitoterapia;10,54;20,53;21;9;2;
+8437020000036;Fucus Premium Comprimidos 90ud;Herbolario & Fitoterapia;12,14;24,29;21;2;4;
+8437020000037;Ginseng Rojo Premium Extracto Seco 60cap;Herbolario & Fitoterapia;5,91;13,09;21;35;5;
+8437020000038;Rhodiola Premium Ampollas 20ud;Herbolario & Fitoterapia;6,97;12,27;21;0;3;
+8437020000039;Uña de Gato Premium Comprimidos 90ud;Herbolario & Fitoterapia;4,13;9,17;21;32;3;10,96
+8437020000040;Valeriana Premium Premium Tintura 50ml;Herbolario & Fitoterapia;13,93;25,75;21;7;2;
+8437020000041;Pasiflora Premium Premium Jarabe 250ml;Herbolario & Fitoterapia;4,67;8,37;21;12;2;
+8437020000042;Equinácea Premium Premium Extracto Seco 60cap;Herbolario & Fitoterapia;9,54;18,25;21;38;2;
+8437020000043;Cardo Mariano Premium Premium Ampollas 20ud;Herbolario & Fitoterapia;11,56;23,74;21;20;3;
+8437020000044;Própolis Premium Premium Tintura 50ml;Herbolario & Fitoterapia;6,07;12,16;21;10;4;
+8437020000045;Harpagofito Premium Premium Extracto Seco 60cap;Herbolario & Fitoterapia;4,08;8,85;21;23;5;11,06
+8437020000046;Ginkgo Biloba Premium Premium Jarabe 250ml;Herbolario & Fitoterapia;12,54;22,23;21;27;4;
+8437020000047;Diente de León Premium Premium Extracto Seco 60cap;Herbolario & Fitoterapia;11,03;23,29;21;7;2;
+8437020000048;Cola de Caballo Premium Premium Comprimidos 90ud;Herbolario & Fitoterapia;8,30;17,84;21;31;5;
+8437020000049;Boldo Premium Premium Comprimidos 90ud;Herbolario & Fitoterapia;7,18;12,21;21;32;3;
+8437020000050;Magnesio Bisglicinato 30 sobres;Suplementación & Adaptógenos;9,48;15,96;21;25;4;20,98
+8437020000051;Ashwagandha KSM-66 Polvo 200g;Suplementación & Adaptógenos;11,35;21,43;21;19;4;27,13
+8437020000052;Vitamina D3 60cap;Suplementación & Adaptógenos;17,05;29,03;21;34;3;
+8437020000053;Omega 3 120 comprimidos;Suplementación & Adaptógenos;15,73;31,52;21;35;2;
+8437020000054;Colágeno Marino Polvo 200g;Suplementación & Adaptógenos;6,13;13,35;21;5;4;
+8437020000055;Zinc Quelado Polvo 200g;Suplementación & Adaptógenos;14,62;28,19;21;36;2;
+8437020000056;Probióticos 10 Cepas 90cap;Suplementación & Adaptógenos;8,47;14,70;21;23;3;
+8437020000057;Melatonina 60cap;Suplementación & Adaptógenos;14,14;26,56;21;18;2;
+8437020000058;Hierro Bisglicinato Polvo 200g;Suplementación & Adaptógenos;14,94;25,43;21;36;2;
+8437020000059;Vitamina B12 Polvo 200g;Suplementación & Adaptógenos;9,32;18,98;21;8;3;
+8437020000060;Coenzima Q10 90cap;Suplementación & Adaptógenos;8,81;14,86;21;29;3;
+8437020000061;Multivitamínico 120 comprimidos;Suplementación & Adaptógenos;10,25;20,76;21;32;4;
+8437020000062;Maca Andina 90cap;Suplementación & Adaptógenos;11,58;21,33;21;29;3;
+8437020000063;Espirulina 30 sobres;Suplementación & Adaptógenos;11,91;24,25;21;36;5;
+8437020000064;Chlorella 30 sobres;Suplementación & Adaptógenos;7,62;14,17;21;24;3;
+8437020000065;L-Glutamina 120 comprimidos;Suplementación & Adaptógenos;12,69;21,77;21;8;3;
+8437020000066;Triptófano 30 sobres;Suplementación & Adaptógenos;16,70;31,71;21;0;2;
+8437020000067;Vitamina C Liposomal 60cap;Suplementación & Adaptógenos;16,31;28,66;21;13;5;
+8437020000068;Selenio 60cap;Suplementación & Adaptógenos;9,33;20,29;21;22;2;
+8437020000069;Cúrcuma con Pimienta Negra 30 sobres;Suplementación & Adaptógenos;7,84;14,26;21;0;2;
+8437020000070;Magnesio Bisglicinato Premium 120 comprimidos;Suplementación & Adaptógenos;10,72;18,24;21;39;3;21,14
+8437020000071;Ashwagandha KSM-66 Premium 90cap;Suplementación & Adaptógenos;7,40;12,77;21;35;4;
+8437020000072;Vitamina D3 Premium 90cap;Suplementación & Adaptógenos;15,28;25,87;21;9;2;
+8437020000073;Omega 3 Premium Polvo 200g;Suplementación & Adaptógenos;16,61;31,09;21;27;5;
+8437020000074;Colágeno Marino Premium 60cap;Suplementación & Adaptógenos;6,02;13,10;21;22;3;15,92
+8437020000075;Zinc Quelado Premium 120 comprimidos;Suplementación & Adaptógenos;13,01;26,97;21;31;4;
+8437020000076;Probióticos 10 Cepas Premium Polvo 200g;Suplementación & Adaptógenos;5,96;10,01;21;22;3;
+8437020000077;Melatonina Premium 60cap;Suplementación & Adaptógenos;6,28;13,28;21;39;5;
+8437020000078;Hierro Bisglicinato Premium 120 comprimidos;Suplementación & Adaptógenos;10,01;21,45;21;16;5;
+8437020000079;Vitamina B12 Premium 120 comprimidos;Suplementación & Adaptógenos;9,11;19,18;21;6;3;
+8437020000080;Coenzima Q10 Premium Polvo 200g;Suplementación & Adaptógenos;7,76;14,14;21;23;3;
+8437020000081;Multivitamínico Premium 30 sobres;Suplementación & Adaptógenos;8,23;14,00;21;38;2;
+8437020000082;Maca Andina Premium 30 sobres;Suplementación & Adaptógenos;13,02;26,43;21;27;3;
+8437020000083;Espirulina Premium 120 comprimidos;Suplementación & Adaptógenos;6,05;13,09;21;3;5;
+8437020000084;Chlorella Premium 60cap;Suplementación & Adaptógenos;15,13;27,65;21;17;3;
+8437020000085;L-Glutamina Premium 90cap;Suplementación & Adaptógenos;15,80;31,77;21;5;2;
+8437020000086;Triptófano Premium 30 sobres;Suplementación & Adaptógenos;5,19;10,12;21;19;3;
+8437020000087;Vitamina C Liposomal Premium Polvo 200g;Suplementación & Adaptógenos;8,08;16,37;21;33;3;
+8437020000088;Selenio Premium Polvo 200g;Suplementación & Adaptógenos;5,97;12,19;21;20;5;
+8437020000089;Cúrcuma con Pimienta Negra Premium 60cap;Suplementación & Adaptógenos;15,56;28,23;21;33;4;
+8437020000090;Magnesio Bisglicinato Premium Premium 30 sobres;Suplementación & Adaptógenos;15,13;26,18;21;5;3;
+8437020000091;Ashwagandha KSM-66 Premium Premium 30 sobres;Suplementación & Adaptógenos;6,43;13,69;21;31;3;
+8437020000092;Vitamina D3 Premium Premium 30 sobres;Suplementación & Adaptógenos;12,37;21,43;21;3;5;
+8437020000093;Omega 3 Premium Premium Polvo 200g;Suplementación & Adaptógenos;5,53;11,07;21;14;3;
+8437020000094;Colágeno Marino Premium Premium Polvo 200g;Suplementación & Adaptógenos;7,80;13,28;21;39;5;
+8437020000095;Zinc Quelado Premium Premium Polvo 200g;Suplementación & Adaptógenos;7,50;12,71;21;9;2;
+8437020000096;Probióticos 10 Cepas Premium Premium 90cap;Suplementación & Adaptógenos;9,52;17,05;21;20;2;
+8437020000097;Melatonina Premium Premium 90cap;Suplementación & Adaptógenos;5,94;10,95;21;3;3;
+8437020000098;Hierro Bisglicinato Premium Premium 90cap;Suplementación & Adaptógenos;14,82;25,08;21;13;3;31,43
+8437020000099;Vitamina B12 Premium Premium 30 sobres;Suplementación & Adaptógenos;5,24;9,80;21;37;3;
+8437020000100;Manzanilla Lata 30g;Infusiones & Té;2,88;6,16;10;33;3;
+8437020000101;Tila Granel 100g;Infusiones & Té;6,70;13,42;10;11;3;
+8437020000102;Menta Poleo 25 filtros;Infusiones & Té;3,45;6,51;10;23;5;
+8437020000103;Té Verde Sencha 25 filtros;Infusiones & Té;5,64;12,28;10;5;2;
+8437020000104;Té Rojo Pu-erh 20 pirámides;Infusiones & Té;5,63;11,56;10;8;4;14,53
+8437020000105;Rooibos 20 pirámides;Infusiones & Té;3,99;8,37;10;18;5;
+8437020000106;Infusión Digestiva Granel 250g;Infusiones & Té;7,10;14,12;10;2;5;
+8437020000107;Infusión Relax 20 pirámides;Infusiones & Té;2,05;4,44;10;31;2;
+8437020000108;Infusión Detox 20 pirámides;Infusiones & Té;3,38;6,14;10;37;5;
+8437020000109;Jengibre y Limón 20 pirámides;Infusiones & Té;6,05;11,57;10;33;5;13,10
+8437020000110;Hibisco Lata 30g;Infusiones & Té;7,67;13,25;10;2;3;
+8437020000111;Té Matcha Ceremonial Lata 30g;Infusiones & Té;2,23;4,50;10;37;3;
+8437020000112;Anís Estrellado Granel 250g;Infusiones & Té;5,13;9,70;10;31;2;
+8437020000113;Hierbaluisa 20 pirámides;Infusiones & Té;5,59;9,69;10;38;2;
+8437020000114;Salvia 20 pirámides;Infusiones & Té;4,48;8,29;10;32;4;9,14
+8437020000115;Romero 20 pirámides;Infusiones & Té;2,72;4,99;10;6;2;5,67
+8437020000116;Té Blanco 25 filtros;Infusiones & Té;7,20;12,51;10;5;2;
+8437020000117;Infusión Depurativa Lata 30g;Infusiones & Té;4,71;10,33;10;7;4;
+8437020000118;Cola de Caballo Infusión 25 filtros;Infusiones & Té;3,77;8,04;10;25;4;
+8437020000119;Boldo Infusión 20 pirámides;Infusiones & Té;4,88;9,48;10;35;4;
+8437020000120;Manzanilla Premium Lata 30g;Infusiones & Té;3,43;6,98;10;8;5;
+8437020000121;Tila Premium Granel 100g;Infusiones & Té;2,62;4,37;10;39;2;5,16
+8437020000122;Menta Poleo Premium Granel 100g;Infusiones & Té;7,55;14,29;10;0;5;
+8437020000123;Té Verde Sencha Premium Lata 30g;Infusiones & Té;3,96;8,36;10;13;5;
+8437020000124;Té Rojo Pu-erh Premium 25 filtros;Infusiones & Té;6,09;12,55;10;13;3;
+8437020000125;Rooibos Premium 25 filtros;Infusiones & Té;3,55;7,69;10;12;5;
+8437020000126;Infusión Digestiva Premium 20 pirámides;Infusiones & Té;4,14;9,11;10;24;4;
+8437020000127;Infusión Relax Premium Granel 100g;Infusiones & Té;4,68;9,15;10;23;4;
+8437020000128;Infusión Detox Premium Granel 250g;Infusiones & Té;6,21;11,64;10;21;5;
+8437020000129;Jengibre y Limón Premium Lata 30g;Infusiones & Té;5,09;8,91;10;32;2;
+8437020000130;Hibisco Premium 25 filtros;Infusiones & Té;2,51;4,79;10;30;5;6,03
+8437020000131;Té Matcha Ceremonial Premium Lata 30g;Infusiones & Té;7,98;14,46;10;25;4;
+8437020000132;Anís Estrellado Premium Granel 250g;Infusiones & Té;5,52;9,37;10;22;5;
+8437020000133;Hierbaluisa Premium 25 filtros;Infusiones & Té;5,34;9,28;10;1;3;
+8437020000134;Salvia Premium Granel 100g;Infusiones & Té;3,66;6,53;10;15;3;
+8437020000135;Romero Premium Granel 100g;Infusiones & Té;2,94;4,95;10;38;2;
+8437020000136;Té Blanco Premium Granel 100g;Infusiones & Té;4,82;8,38;10;2;5;
+8437020000137;Infusión Depurativa Premium Granel 250g;Infusiones & Té;5,08;9,14;10;2;5;
+8437020000138;Cola de Caballo Infusión Premium Lata 30g;Infusiones & Té;6,49;11,08;10;10;5;
+8437020000139;Boldo Infusión Premium 20 pirámides;Infusiones & Té;3,67;6,52;10;0;2;
+8437020000140;Manzanilla Premium Premium Granel 250g;Infusiones & Té;5,83;10,80;10;25;4;
+8437020000141;Tila Premium Premium 20 pirámides;Infusiones & Té;2,68;4,75;10;18;5;
+8437020000142;Menta Poleo Premium Premium 25 filtros;Infusiones & Té;2,00;3,71;10;34;2;
+8437020000143;Té Verde Sencha Premium Premium Granel 100g;Infusiones & Té;5,87;11,50;10;5;5;
+8437020000144;Té Rojo Pu-erh Premium Premium Granel 100g;Infusiones & Té;4,76;8,96;10;24;4;
+8437020000145;Rooibos Premium Premium Lata 30g;Infusiones & Té;5,72;11,43;10;25;3;
+8437020000146;Infusión Digestiva Premium Premium Granel 100g;Infusiones & Té;5,27;11,24;10;21;3;
+8437020000147;Infusión Relax Premium Premium 25 filtros;Infusiones & Té;5,93;12,22;10;26;3;
+8437020000148;Infusión Detox Premium Premium Granel 100g;Infusiones & Té;3,02;6,70;10;12;2;
+8437020000149;Jengibre y Limón Premium Premium 25 filtros;Infusiones & Té;5,66;10,02;10;34;4;
+8437020000150;Aceite de Rosa Mosqueta 30ml;Cosmética Natural;13,36;23,15;21;24;5;
+8437020000151;Aceite de Argán 30ml;Cosmética Natural;10,59;19,67;21;37;2;
+8437020000152;Crema Facial de Caléndula 100g;Cosmética Natural;5,76;11,56;21;4;5;
+8437020000153;Jabón Natural de Avena 50ml;Cosmética Natural;2,78;5,48;21;20;3;6,14
+8437020000154;Gel de Aloe Vera Puro 50ml;Cosmética Natural;3,00;5,80;21;39;5;6,53
+8437020000155;Champú Sólido de Romero 100ml;Cosmética Natural;4,29;9,51;21;12;4;12,41
+8437020000156;Aceite de Coco Virgen 50ml;Cosmética Natural;11,39;20,25;21;38;4;
+8437020000157;Manteca de Karité 200ml;Cosmética Natural;9,66;18,34;21;22;4;
+8437020000158;Sérum Facial de Vitamina C 50ml;Cosmética Natural;3,03;5,14;21;28;2;
+8437020000159;Crema de Manos de Rosa Mosqueta 30ml;Cosmética Natural;3,66;7,30;21;29;5;
+8437020000160;Desodorante Natural de Bicarbonato 50ml;Cosmética Natural;5,32;11,50;21;39;3;
+8437020000161;Bálsamo Labial de Cera de Abeja 50ml;Cosmética Natural;2,30;4,41;21;30;5;
+8437020000162;Exfoliante Corporal de Café 100ml;Cosmética Natural;7,34;12,68;21;17;5;15,61
+8437020000163;Aceite de Jojoba 200ml;Cosmética Natural;7,68;15,39;21;31;4;
+8437020000164;Tónico Facial de Hamamelis 200ml;Cosmética Natural;12,79;22,71;21;28;4;
+8437020000165;Aceite de Rosa Mosqueta Premium 100ml;Cosmética Natural;4,53;9,85;21;2;3;
+8437020000166;Aceite de Argán Premium 100g;Cosmética Natural;12,62;23,46;21;7;5;29,90
+8437020000167;Crema Facial de Caléndula Premium 50ml;Cosmética Natural;8,71;17,06;21;30;4;
+8437020000168;Jabón Natural de Avena Premium 100ml;Cosmética Natural;7,36;16,02;21;13;5;
+8437020000169;Gel de Aloe Vera Puro Premium 50ml;Cosmética Natural;10,07;19,23;21;36;5;
+8437020000170;Champú Sólido de Romero Premium 100ml;Cosmética Natural;6,06;13,37;21;31;2;
+8437020000171;Aceite de Coco Virgen Premium 200ml;Cosmética Natural;3,05;5,10;21;13;5;
+8437020000172;Manteca de Karité Premium 100g;Cosmética Natural;11,77;21,09;21;35;4;27,48
+8437020000173;Sérum Facial de Vitamina C Premium 50ml;Cosmética Natural;8,47;15,09;21;14;4;18,21
+8437020000174;Crema de Manos de Rosa Mosqueta Premium 200ml;Cosmética Natural;5,23;9,21;21;16;4;
+8437020000175;Desodorante Natural de Bicarbonato Premium 200ml;Cosmética Natural;8,96;19,40;21;23;5;
+8437020000176;Bálsamo Labial de Cera de Abeja Premium 30ml;Cosmética Natural;8,65;16,07;21;21;2;
+8437020000177;Exfoliante Corporal de Café Premium 100g;Cosmética Natural;3,22;5,89;21;22;5;
+8437020000178;Aceite de Jojoba Premium 200ml;Cosmética Natural;8,33;15,52;21;2;5;
+8437020000179;Tónico Facial de Hamamelis Premium 50ml;Cosmética Natural;6,49;11,63;21;11;2;
+8437020000180;Aceite de Rosa Mosqueta Premium Premium 50ml;Cosmética Natural;10,71;20,90;21;25;4;
+8437020000181;Aceite de Argán Premium Premium 200ml;Cosmética Natural;5,97;9,98;21;17;5;
+8437020000182;Crema Facial de Caléndula Premium Premium 100ml;Cosmética Natural;3,13;5,53;21;39;2;7,24
+8437020000183;Jabón Natural de Avena Premium Premium 100g;Cosmética Natural;3,35;6,13;21;25;3;
+8437020000184;Gel de Aloe Vera Puro Premium Premium 200ml;Cosmética Natural;5,79;10,36;21;32;3;
+8437020000185;Champú Sólido de Romero Premium Premium 100ml;Cosmética Natural;10,14;18,85;21;39;2;
+8437020000186;Aceite de Coco Virgen Premium Premium 30ml;Cosmética Natural;9,72;18,27;21;18;2;
+8437020000187;Manteca de Karité Premium Premium 100g;Cosmética Natural;9,03;15,28;21;24;4;
+8437020000188;Sérum Facial de Vitamina C Premium Premium 50ml;Cosmética Natural;7,71;16,55;21;29;2;
+8437020000189;Crema de Manos de Rosa Mosqueta Premium Premium 100g;Cosmética Natural;4,42;8,74;21;7;4;
+8437020000190;Desodorante Natural de Bicarbonato Premium Premium 200ml;Cosmética Natural;8,54;18,53;21;12;5;23,45
+8437020000191;Bálsamo Labial de Cera de Abeja Premium Premium 100g;Cosmética Natural;7,61;14,83;21;36;2;18,82
+8437020000192;Exfoliante Corporal de Café Premium Premium 30ml;Cosmética Natural;10,02;21,06;21;39;3;
+8437020000193;Aceite de Jojoba Premium Premium 30ml;Cosmética Natural;13,66;22,82;21;38;2;
+8437020000194;Tónico Facial de Hamamelis Premium Premium 200ml;Cosmética Natural;2,43;4,40;21;14;3;5,69
+8437020000195;Aceite de Rosa Mosqueta Premium Premium Premium 100g;Cosmética Natural;8,49;16,00;21;26;5;19,53
+8437020000196;Aceite de Argán Premium Premium Premium 30ml;Cosmética Natural;10,08;20,36;21;31;2;
+8437020000197;Crema Facial de Caléndula Premium Premium Premium 50ml;Cosmética Natural;7,91;14,66;21;12;3;
+8437020000198;Jabón Natural de Avena Premium Premium Premium 200ml;Cosmética Natural;2,52;4,32;21;28;5;
+8437020000199;Gel de Aloe Vera Puro Premium Premium Premium 30ml;Cosmética Natural;8,40;16,02;21;13;3;
+8437020000200;Miel Cruda de Azahar 250g;Despensa Consciente;6,96;12,32;10;19;5;
+8437020000201;Miel de Romero 500g;Despensa Consciente;4,15;9,15;10;21;5;
+8437020000202;Polen Fresco de Abeja Botella 500ml;Despensa Consciente;4,06;7,51;10;32;3;
+8437020000203;Aceite de Oliva Virgen Extra 1kg;Despensa Consciente;7,16;12,40;10;24;2;
+8437020000204;Quinoa Real 500g;Despensa Consciente;6,38;13,81;10;11;3;
+8437020000205;Copos de Avena Tarro 250g;Despensa Consciente;9,14;16,76;10;7;3;
+8437020000206;Semillas de Chía 250g;Despensa Consciente;6,48;11,23;10;25;4;
+8437020000207;Semillas de Lino 1kg;Despensa Consciente;7,89;17,22;10;38;2;
+8437020000208;Almendra Cruda 1kg;Despensa Consciente;5,24;9,75;10;19;3;
+8437020000209;Anacardo Natural 500g;Despensa Consciente;4,97;8,80;10;22;5;10,74
+8437020000210;Dátil Medjoul 250g;Despensa Consciente;9,08;17,15;10;25;5;
+8437020000211;Cacao Puro en Polvo Botella 500ml;Despensa Consciente;5,36;9,65;10;10;5;
+8437020000212;Sirope de Agave 250g;Despensa Consciente;6,17;12,01;10;38;2;
+8437020000213;Tahini 250g;Despensa Consciente;6,47;14,24;10;4;5;
+8437020000214;Aceite de Coco para Cocinar 500g;Despensa Consciente;3,64;6,32;10;1;5;
+8437020000215;Harina de Almendra Botella 500ml;Despensa Consciente;3,97;8,27;10;1;2;
+8437020000216;Levadura Nutricional 250g;Despensa Consciente;5,20;10,08;10;19;5;
+8437020000217;Sal del Himalaya 1kg;Despensa Consciente;9,78;16,75;10;28;5;
+8437020000218;Miel Cruda de Azahar Premium 1kg;Despensa Consciente;1,91;3,28;10;1;5;3,63
+8437020000219;Miel de Romero Premium 250g;Despensa Consciente;8,26;14,53;10;32;4;
+8437020000220;Polen Fresco de Abeja Premium 1kg;Despensa Consciente;7,91;15,90;10;25;2;
+8437020000221;Aceite de Oliva Virgen Extra Premium Tarro 250g;Despensa Consciente;6,19;10,46;10;32;4;
+8437020000222;Quinoa Real Premium Tarro 250g;Despensa Consciente;1,45;3,22;10;24;5;
+8437020000223;Copos de Avena Premium 250g;Despensa Consciente;8,15;14,17;10;16;5;
+8437020000224;Semillas de Chía Premium 250g;Despensa Consciente;1,88;3,32;10;21;3;
+8437020000225;Semillas de Lino Premium 250g;Despensa Consciente;2,66;5,66;10;12;2;
+8437020000226;Almendra Cruda Premium 1kg;Despensa Consciente;5,49;11,20;10;3;5;
+8437020000227;Anacardo Natural Premium 1kg;Despensa Consciente;5,23;9,93;10;7;5;
+8437020000228;Dátil Medjoul Premium 1kg;Despensa Consciente;3,27;6,85;10;37;3;
+8437020000229;Cacao Puro en Polvo Premium Botella 500ml;Despensa Consciente;3,79;6,97;10;27;4;
+8437020000230;Sirope de Agave Premium Botella 500ml;Despensa Consciente;7,26;15,28;10;30;2;
+8437020000231;Tahini Premium Botella 500ml;Despensa Consciente;3,20;6,79;10;19;3;
+8437020000232;Aceite de Coco para Cocinar Premium 250g;Despensa Consciente;9,63;16,49;10;8;3;18,57
+8437020000233;Harina de Almendra Premium 250g;Despensa Consciente;6,88;14,11;10;22;2;16,10
+8437020000234;Levadura Nutricional Premium 250g;Despensa Consciente;8,59;17,23;10;19;3;
+8437020000235;Sal del Himalaya Premium 250g;Despensa Consciente;7,48;12,58;10;7;3;
+8437020000236;Miel Cruda de Azahar Premium Premium 500g;Despensa Consciente;7,33;12,79;10;25;2;
+8437020000237;Miel de Romero Premium Premium Botella 500ml;Despensa Consciente;3,80;7,86;10;7;3;
+8437020000238;Polen Fresco de Abeja Premium Premium 250g;Despensa Consciente;9,35;17,80;10;7;3;
+8437020000239;Aceite de Oliva Virgen Extra Premium Premium Tarro 250g;Despensa Consciente;10,55;17,59;10;37;3;
+8437020000240;Quinoa Real Premium Premium 1kg;Despensa Consciente;5,58;12,25;10;32;3;
+8437020000241;Copos de Avena Premium Premium 250g;Despensa Consciente;4,01;6,76;10;4;3;
+8437020000242;Semillas de Chía Premium Premium Botella 500ml;Despensa Consciente;2,85;6,14;10;7;2;
+8437020000243;Semillas de Lino Premium Premium 250g;Despensa Consciente;8,70;15,38;10;13;3;
+8437020000244;Almendra Cruda Premium Premium 250g;Despensa Consciente;4,73;9,48;10;37;3;
+8437020000245;Anacardo Natural Premium Premium 500g;Despensa Consciente;3,92;8,44;10;12;2;
+8437020000246;Dátil Medjoul Premium Premium Tarro 250g;Despensa Consciente;8,85;17,26;10;31;3;
+8437020000247;Cacao Puro en Polvo Premium Premium Botella 500ml;Despensa Consciente;5,93;10,94;10;28;2;
+8437020000248;Sirope de Agave Premium Premium 500g;Despensa Consciente;4,31;9,49;10;15;5;
+8437020000249;Tahini Premium Premium 250g;Despensa Consciente;10,69;17,89;10;6;2;
+8437020000250;Batido Sustitutivo de Proteína Caja 12 barritas;Dietética & Control de Peso;11,65;20,34;21;15;5;
+8437020000251;Quemador de Grasa Natural 90cap;Dietética & Control de Peso;10,43;17,97;21;14;4;
+8437020000252;Fibra de Konjac 90cap;Dietética & Control de Peso;14,60;28,09;21;17;5;34,00
+8437020000253;Té Verde Adelgazante 90cap;Dietética & Control de Peso;16,57;27,87;21;21;4;
+8437020000254;L-Carnitina 60cap;Dietética & Control de Peso;10,71;21,95;21;11;2;
+8437020000255;Garcinia Cambogia Polvo 400g;Dietética & Control de Peso;14,43;26,41;21;14;5;31,18
+8437020000256;Barrita Proteica Polvo 400g;Dietética & Control de Peso;8,82;18,92;21;11;3;
+8437020000257;Sustitutivo de Comida 60cap;Dietética & Control de Peso;6,46;11,21;21;18;2;
+8437020000258;Complejo Drenante 30 sobres;Dietética & Control de Peso;14,28;24,44;21;34;4;32,58
+8437020000259;Picolinato de Cromo Polvo 400g;Dietética & Control de Peso;12,32;21,58;21;6;5;
+8437020000260;Batido Sustitutivo de Proteína Premium Caja 12 barritas;Dietética & Control de Peso;8,68;15,95;21;7;3;
+8437020000261;Quemador de Grasa Natural Premium Caja 12 barritas;Dietética & Control de Peso;9,06;16,48;21;39;5;
+8437020000262;Fibra de Konjac Premium 60cap;Dietética & Control de Peso;5,12;10,51;21;36;4;
+8437020000263;Té Verde Adelgazante Premium 90cap;Dietética & Control de Peso;12,99;23,35;21;9;5;
+8437020000264;L-Carnitina Premium Caja 12 barritas;Dietética & Control de Peso;11,85;23,36;21;14;3;
+8437020000265;Garcinia Cambogia Premium 90cap;Dietética & Control de Peso;9,11;16,85;21;22;2;
+8437020000266;Barrita Proteica Premium Polvo 400g;Dietética & Control de Peso;5,65;10,17;21;8;3;
+8437020000267;Sustitutivo de Comida Premium Caja 12 barritas;Dietética & Control de Peso;12,96;28,64;21;24;5;
+8437020000268;Complejo Drenante Premium Caja 12 barritas;Dietética & Control de Peso;12,57;21,61;21;5;4;
+8437020000269;Picolinato de Cromo Premium 90cap;Dietética & Control de Peso;7,81;14,40;21;3;5;
+8437020000270;Batido Sustitutivo de Proteína Premium Premium 60cap;Dietética & Control de Peso;7,15;13,35;21;32;3;
+8437020000271;Quemador de Grasa Natural Premium Premium Caja 12 barritas;Dietética & Control de Peso;11,40;24,79;21;25;5;
+8437020000272;Fibra de Konjac Premium Premium Polvo 400g;Dietética & Control de Peso;8,81;17,05;21;35;3;
+8437020000273;Té Verde Adelgazante Premium Premium 30 sobres;Dietética & Control de Peso;7,05;15,47;21;36;4;
+8437020000274;L-Carnitina Premium Premium Caja 12 barritas;Dietética & Control de Peso;12,56;26,38;21;1;3;
+8437020000275;Garcinia Cambogia Premium Premium 30 sobres;Dietética & Control de Peso;8,67;18,12;21;23;4;
+8437020000276;Barrita Proteica Premium Premium Caja 12 barritas;Dietética & Control de Peso;8,22;16,01;21;37;5;
+8437020000277;Sustitutivo de Comida Premium Premium Caja 12 barritas;Dietética & Control de Peso;12,66;26,39;21;14;4;
+8437020000278;Complejo Drenante Premium Premium 90cap;Dietética & Control de Peso;10,17;17,60;21;9;5;20,42
+8437020000279;Picolinato de Cromo Premium Premium 60cap;Dietética & Control de Peso;13,75;23,73;21;4;3;
+8437020000280;Batido Sustitutivo de Proteína Premium Premium Premium Caja 12 barritas;Dietética & Control de Peso;6,82;12,62;21;28;4;
+8437020000281;Quemador de Grasa Natural Premium Premium Premium 60cap;Dietética & Control de Peso;10,32;18,23;21;38;4;
+8437020000282;Fibra de Konjac Premium Premium Premium 30 sobres;Dietética & Control de Peso;15,54;27,88;21;8;4;
+8437020000283;Té Verde Adelgazante Premium Premium Premium Caja 12 barritas;Dietética & Control de Peso;16,30;28,91;21;30;4;
+8437020000284;L-Carnitina Premium Premium Premium 30 sobres;Dietética & Control de Peso;13,43;27,65;21;39;3;36,64
+8437020000285;Garcinia Cambogia Premium Premium Premium 30 sobres;Dietética & Control de Peso;9,27;19,21;21;30;5;
+8437020000286;Barrita Proteica Premium Premium Premium Caja 12 barritas;Dietética & Control de Peso;14,57;25,84;21;19;4;
+8437020000287;Sustitutivo de Comida Premium Premium Premium 60cap;Dietética & Control de Peso;12,91;21,74;21;29;3;
+8437020000288;Complejo Drenante Premium Premium Premium 30 sobres;Dietética & Control de Peso;6,25;13,24;21;35;4;16,08
+8437020000289;Picolinato de Cromo Premium Premium Premium Polvo 400g;Dietética & Control de Peso;11,00;22,59;21;19;3;
+8437020000290;Batido Sustitutivo de Proteína Premium Premium Premium Premium Polvo 400g;Dietética & Control de Peso;12,20;25,84;21;21;2;33,42
+8437020000291;Quemador de Grasa Natural Premium Premium Premium Premium Polvo 400g;Dietética & Control de Peso;12,57;27,65;21;24;2;
+8437020000292;Fibra de Konjac Premium Premium Premium Premium 90cap;Dietética & Control de Peso;13,60;27,54;21;0;5;
+8437020000293;Té Verde Adelgazante Premium Premium Premium Premium Caja 12 barritas;Dietética & Control de Peso;10,31;18,81;21;29;5;
+8437020000294;L-Carnitina Premium Premium Premium Premium Caja 12 barritas;Dietética & Control de Peso;13,87;26,78;21;4;4;
+8437020000295;Garcinia Cambogia Premium Premium Premium Premium 60cap;Dietética & Control de Peso;8,97;19,81;21;19;2;
+8437020000296;Barrita Proteica Premium Premium Premium Premium 60cap;Dietética & Control de Peso;12,84;23,21;21;7;5;
+8437020000297;Sustitutivo de Comida Premium Premium Premium Premium 90cap;Dietética & Control de Peso;13,84;24,33;21;21;2;
+8437020000298;Complejo Drenante Premium Premium Premium Premium Polvo 400g;Dietética & Control de Peso;5,77;10,50;21;35;2;
+8437020000299;Picolinato de Cromo Premium Premium Premium Premium Polvo 400g;Dietética & Control de Peso;14,21;26,04;21;21;3;28,90

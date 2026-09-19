@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Check, AlertCircle, Sparkles } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
+import { getPlaceholderForCategory } from '../../lib/product-image';
 
 export function ProductCard({ product }) {
   const { addToCart, cart } = useShop();
   const [added, setAdded] = useState(false);
+  const imageSrc = product.imageUrl || product.image || getPlaceholderForCategory(product.category);
 
   const cartItem = cart.find(item => item.id === product.id);
   const qtyInCart = cartItem ? cartItem.quantity : 0;
@@ -25,7 +27,7 @@ export function ProductCard({ product }) {
   return (
     <article className={`productCard ${isOutOfStock ? 'outOfStock' : ''}`}>
       <div className="productImageWrapper">
-        <img src={product.image} alt={product.name} loading="lazy" />
+        <img src={imageSrc} alt={product.name} loading="lazy" />
         
         {/* Badges de categoría o atributo */}
         <div className="productBadges">
