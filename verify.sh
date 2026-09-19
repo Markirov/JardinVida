@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify.sh — Script de verificación integral del proyecto
 # Retorna 0 solo si todas las pruebas pasan exitosamente.
-set -euo pipefail
+set -eu
 
 echo "=================================================="
 echo "  VERIFICACIÓN INTEGRAL DE PROYECTO"

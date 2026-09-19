@@ -2657,3 +2657,703 @@ footer p {
   cursor: pointer;
 }
 
+/* ==========================================================================
+   CONTROL DE STOCK AVANZADO, KPIS, FILTROS Y ALERTAS (Fase 4 - Admin)
+   ========================================================================== */
+
+/* Subtítulo de sección */
+.adminSectionDesc {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+/* KPI Cards Grid */
+.inventoryKpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.kpiCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--moss);
+  box-shadow: 0 4px 14px rgba(31, 23, 18, 0.08);
+}
+
+.kpiCard.kpiActive {
+  border-color: var(--moss);
+  background: var(--paper);
+  box-shadow: 0 0 0 2px rgba(63, 125, 75, 0.2);
+}
+
+.kpiIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.kpiTotal {
+  background: rgba(31, 23, 18, 0.08);
+  color: var(--soil);
+}
+
+.kpiOut {
+  background: rgba(184, 74, 57, 0.15);
+  color: var(--clay);
+}
+
+.kpiLow {
+  background: rgba(224, 159, 62, 0.2);
+  color: #b3730e;
+}
+
+.kpiCommitted {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+}
+
+.kpiHealthy {
+  background: rgba(63, 125, 75, 0.15);
+  color: var(--moss);
+}
+
+.kpiData {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.kpiValue {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--soil);
+  line-height: 1.2;
+}
+
+.kpiTextOut { color: var(--clay); }
+.kpiTextLow { color: #b3730e; }
+.kpiTextCommitted { color: #2563eb; }
+.kpiTextHealthy { color: var(--moss); }
+
+.kpiValue small {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* Filtros y Buscador */
+.adminFiltersContainer {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adminFiltersRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.adminSearchBox {
+  position: relative;
+  flex: 1 1 300px;
+  display: flex;
+  align-items: center;
+}
+
+.adminSearchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.adminSearchInput {
+  width: 100%;
+  padding: 9px 36px 9px 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: var(--paper);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.adminSearchInput:focus {
+  outline: none;
+  background: var(--white);
+  border-color: var(--moss);
+  box-shadow: 0 0 0 3px rgba(63, 125, 75, 0.15);
+}
+
+.adminSearchClear {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.adminSearchClear:hover {
+  background: rgba(31, 23, 18, 0.08);
+  color: var(--soil);
+}
+
+.adminSelectGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adminSelectLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.adminSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--paper);
+  color: var(--soil);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adminSelect:focus {
+  outline: none;
+  border-color: var(--moss);
+}
+
+.btnResetFilters {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 12.5px;
+  font-weight: 650;
+  margin-left: auto;
+}
+
+/* Píldoras de estado */
+.adminPillsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.adminPillsGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.adminPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 650;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adminPill:hover {
+  border-color: var(--moss);
+  color: var(--soil);
+}
+
+.adminPill.pillActive {
+  background: var(--moss);
+  color: var(--white);
+  border-color: var(--moss);
+}
+
+.adminPill.pillOut.pillActive {
+  background: var(--clay);
+  border-color: var(--clay);
+}
+
+.adminPill.pillLow.pillActive {
+  background: #b3730e;
+  border-color: #b3730e;
+}
+
+.adminPill.pillCommitted.pillActive {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.adminFilterResultsCount {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Tabla de Catálogo Mejorada */
+.adminRowOutOfStock {
+  background: rgba(184, 74, 57, 0.05);
+}
+
+.adminRowLowStock {
+  background: rgba(224, 159, 62, 0.05);
+}
+
+.adminProductNameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.adminProductNameCell strong {
+  font-size: 13.5px;
+  color: var(--soil);
+}
+
+.adminProductBarcode {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.adminProductFormat {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.adminCategoryBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.adminStockCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adminCommittedBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.adminCommittedBtn:hover {
+  background: rgba(59, 130, 246, 0.22);
+}
+
+.adminStockStatusBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.adminStockStatusBadge.badgeOut {
+  background: rgba(184, 74, 57, 0.15);
+  color: var(--clay);
+}
+
+.adminStockStatusBadge.badgeLow {
+  background: rgba(224, 159, 62, 0.2);
+  color: #b3730e;
+}
+
+.adminStockStatusBadge.badgeOk {
+  background: rgba(63, 125, 75, 0.12);
+  color: var(--moss);
+}
+
+.quickAddGroup {
+  display: flex;
+  gap: 4px;
+}
+
+.quickAddBtn {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--soil);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quickAddBtn:hover {
+  background: var(--mint);
+  color: var(--moss);
+  border-color: var(--moss);
+}
+
+.adminEmptyTable {
+  text-align: center;
+  padding: 40px 20px !important;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Barra de Paginación */
+.adminPaginationBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.adminPaginationInfo {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.adminPaginationControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.adminPageSizeSelector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.adminPageSizeSelector select {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adminPageNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adminPageBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--soil);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adminPageBtn:hover:not(:disabled) {
+  background: var(--moss);
+  color: var(--white);
+  border-color: var(--moss);
+}
+
+.adminPageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.adminPageCurrent {
+  font-size: 13px;
+  color: var(--soil);
+}
+
+/* Modal de Detalle de Stock Comprometido */
+.adminModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(31, 23, 18, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.adminModalContent {
+  background: var(--white);
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 16px 36px rgba(31, 23, 18, 0.25);
+  border: 1px solid var(--line);
+}
+
+.adminModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.adminModalTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adminModalTitleGroup .modalIcon {
+  color: #2563eb;
+}
+
+.adminModalHeader h3 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--soil);
+}
+
+.adminModalHeader p {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.adminModalClose {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.adminModalClose:hover {
+  color: var(--soil);
+}
+
+.adminModalBody {
+  padding: 20px;
+}
+
+.committedSummaryBanner {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+}
+
+.committedSummaryBanner > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.committedSummaryLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.committedSummaryBanner strong {
+  font-size: 18px;
+  color: #1e40af;
+}
+
+.committedOrdersTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.committedOrdersTable th,
+.committedOrdersTable td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.committedOrdersTable th {
+  font-size: 11.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.badgeQuantity {
+  display: inline-block;
+  font-weight: 700;
+  background: var(--paper);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+.adminModalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 0 0 16px 16px;
+}
+
+/* Urgencia de Pedidos */
+.orderUrgencyContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orderUrgencyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.urgencyCritical .orderUrgencyBadge {
+  background: rgba(184, 74, 57, 0.18);
+  color: var(--clay);
+  border: 1px solid rgba(184, 74, 57, 0.35);
+  animation: pulseCritical 2s infinite ease-in-out;
+}
+
+.urgencyHigh .orderUrgencyBadge {
+  background: rgba(224, 159, 62, 0.22);
+  color: #b3730e;
+  border: 1px solid rgba(224, 159, 62, 0.4);
+}
+
+.urgencyNormal .orderUrgencyBadge {
+  background: rgba(31, 23, 18, 0.08);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.badgeResolved {
+  background: var(--mint);
+  color: var(--moss);
+  border: 1px solid rgba(63, 125, 75, 0.3);
+}
+
+.orderTimeAgo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.cardUrgentHighlight {
+  border-left: 5px solid var(--clay) !important;
+  background: linear-gradient(to right, rgba(184, 74, 57, 0.04), var(--white)) !important;
+}
+
+.adminOrderHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adminOrderItemsBreakdown {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--paper);
+  border-radius: 6px;
+  color: var(--soil);
+  font-size: 12.5px;
+}
+
+@keyframes pulseCritical {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+

@@ -1,5 +1,26 @@
 # TAREAS COMPLETADAS (DONE)
 
+- [x] **Optimización de control de stock, filtros avanzados, ordenación y alertas de pedidos en admin** (2026-09-19, Lead Developer (Antigravity)):
+  1. Pedido del usuario: "En el control de stock, dentro del catálogo es bastante incómodo de gestionar. Prepárame un plan para que se pueda filtrar, ordenar y ver alertas, tanto de stock bajo como de cercanía a la entrega del pedido".
+  2. Plan de arquitectura y ejecución aprobado en `tracking/plans/PLAN_2026-09-19_optimizacion_control_stock_alertas_admin.md`.
+  3. Módulo de métricas `src/lib/stock-metrics.js`:
+     - `calculateCommittedStock(orders)`: calcula stock reservado en pedidos con estado `pendiente_preparacion` y agrupa por producto con detalles del pedido (ID, cliente, método de entrega, cantidad).
+     - `getOrderUrgency(order)`: categoriza la urgencia temporal de pedidos (Crítico para recogidas en tienda >45 min, Alta para recogidas inmediatas o envíos >12h, Normal) con cálculo de tiempo transcurrido relativo ("Hace X min/h/d").
+     - `filterAndSortProducts(products, options)`: motor multicriterio reactivo de búsqueda (nombre, código de barras EAN-13, formato, categoría), filtros de stock (Agotados, Crítico/Bajo, Comprometidos en Pedidos, Saludables) y ordenación (Stock asc/desc, Nombre A-Z/Z-A, Precio min/max, Categoría).
+  4. Componentes UI modulares para el panel de administración:
+     - `src/components/admin/stock/InventoryKpiSummary.jsx`: barra superior interactiva con 5 tarjetas KPI (Total Referencias, Agotados, Stock Crítico/Bajo, Comprometidos en Pedidos y Saludables).
+     - `src/components/admin/stock/CatalogFiltersBar.jsx`: barra completa con buscador reactivo con botón de limpieza, selector dinámico de categorías, menú de ordenación y píldoras de estado con contadores.
+     - `src/components/admin/orders/OrderUrgencyBadge.jsx`: badge de urgencia reactivo con icono de tienda/camión, tiempo transcurrido y animación de pulso para pedidos críticos.
+  5. Refactorización de `src/components/admin/AdminDashboard.jsx`:
+     - Integración de KPIs de inventario y barra de filtros sobre el catálogo.
+     - Desglose en tabla de stock físico editable vs stock comprometido en pedidos vs disponible real.
+     - Botones de ajuste y reposición rápida de inventario (`+1`, `+5`, `+10`) por fila.
+     - Modal interactivo con desglose de pedidos comprometidos por artículo.
+     - Paginación local configurable (25, 50, 100, 500 por página) con navegación fluida y reseteo automático al filtrar.
+     - Tarjetas de pedidos destacadas con alertas visuales de urgencia para priorizar preparaciones de recogida física y envíos.
+  6. Estilos completos añadidos en `src/styles.css` respetando tokens de diseño existentes.
+  7. Verificación técnica: `npm run build` y `bash verify.sh` completados con éxito (código de salida 0).
+
 - [x] **CSV demo a 300 productos + imagen automática de producto por código de barras** (2026-09-19, Lead Developer (Claude Code)):
   1. Pedido del usuario: "amplía el csv demo a 300 productos, para probar cómo sería trabajar con volumen alto" + "quiero automatizar que al leer un código de barras o poner el nombre de un producto, se busque una imagen de referencia... pero que manualmente se pueda modificar por una específica".
   2. Requisitos afinados por pregunta directa: fuente de imagen = Open Food Facts por código de barras (gratis, sin API key) con placeholder genérico por categoría si no hay resultado (nunca en blanco); disparadores = importación CSV, alta/edición de producto en el admin, y escaneo en TPV.

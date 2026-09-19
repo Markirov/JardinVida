@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Sprout, LogOut, Package, ClipboardList, Download, Upload, Plus, Save, Bell, CheckCircle2, XCircle, CalendarClock, ArrowLeft, RefreshCw, Pencil
+  Sprout, LogOut, Package, ClipboardList, Download, Upload, Plus, Save, Bell,
+  CheckCircle2, XCircle, CalendarClock, ArrowLeft, RefreshCw, Pencil, ChevronLeft,
+  ChevronRight, Info, AlertTriangle, AlertCircle, ShoppingBag
 } from 'lucide-react';
 import { logoutAdmin } from '../../lib/auth-service';
 import {
@@ -10,6 +12,10 @@ import {
 } from '../../lib/firestore-service';
 import { parseAbarrotesCsv } from '../../lib/abarrotes-csv';
 import { resolveProductImage, resolveProductImagesBatch, getPlaceholderForCategory } from '../../lib/product-image';
+import { calculateCommittedStock, filterAndSortProducts } from '../../lib/stock-metrics';
+import { InventoryKpiSummary } from './stock/InventoryKpiSummary';
+import { CatalogFiltersBar } from './stock/CatalogFiltersBar';
+import { OrderUrgencyBadge } from './orders/OrderUrgencyBadge';
 
 const TABS = [
   { id: 'catalogo', label: 'Catálogo', icon: Package },
@@ -36,7 +42,7 @@ function playAlertBeep() {
     osc.start();
     osc.stop(ctx.currentTime + 0.25);
   } catch {
-    // Audio no disponible (p.ej. autoplay bloqueado) — la alerta visual sigue funcionando.
+    // Audio no disponible (p.ej. autoplay bloqueado)
   }
 }
 
@@ -54,82 +60,105 @@ export function AdminDashboard({ userEmail }) {
   const [newProduct, setNewProduct] = useState(EMPTY_PRODUCT);
   const [error, setError] = useState(null);
   const [newOrderAlert, setNewOrderAlert] = useState(null);
-  const [csvPreview, setCsvPreview] = useState(null); // { total, valid, invalid }
+  const [csvPreview, setCsvPreview] = useState(null);
   const [csvError, setCsvError] = useState(null);
   const [isImportingCsv, setIsImportingCsv] = useState(false);
   const [csvImportResult, setCsvImportResult] = useState(null);
-  const [csvImageProgress, setCsvImageProgress] = useState(null); // { done, total }
+  const [csvImageProgress, setCsvImageProgress] = useState(null);
   const [isFetchingNewProductImage, setIsFetchingNewProductImage] = useState(false);
+
+  // Estados para Filtros, Búsqueda, Ordenación y Paginación de Stock
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stockFilter, setStockFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [sortOption, setSortOption] = useState('stock_asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+  const [selectedCommittedProduct, setSelectedCommittedProduct] = useState(null);
+
+  const initialOrdersLoadedRef = useRef(false);
+  const prevOrdersCountRef = useRef(0);
   const csvInputRef = useRef(null);
-  const knownOrderIds = useRef(null);
-  const knownAppointmentIds = useRef(null);
 
   useEffect(() => {
-    const unsubscribe = subscribeToProducts(setProducts, (err) => setError(err.message));
-    return () => unsubscribe();
+    const unsubProducts = subscribeToProducts(setProducts, (err) => setError(err.message));
+    const unsubOrders = subscribeToOrders((newOrders) => {
+      if (initialOrdersLoadedRef.current && newOrders.length > prevOrdersCountRef.current) {
+        const latest = newOrders[0];
+        setNewOrderAlert(latest);
+        playAlertBeep();
+      }
+      initialOrdersLoadedRef.current = true;
+      prevOrdersCountRef.current = newOrders.length;
+      setOrders(newOrders);
+    }, (err) => setError(err.message));
+    const unsubAppointments = subscribeToAppointments(setAppointments, (err) => setError(err.message));
+
+    return () => {
+      unsubProducts();
+      unsubOrders();
+      unsubAppointments();
+    };
   }, []);
 
+  // Calcular mapa de stock comprometido
+  const committedMap = useMemo(() => calculateCommittedStock(orders), [orders]);
+
+  // Filtrado y ordenación
+  const filteredProducts = useMemo(() => {
+    return filterAndSortProducts(products, {
+      searchQuery,
+      stockFilter,
+      categoryFilter,
+      sortOption,
+      committedMap
+    });
+  }, [products, searchQuery, stockFilter, categoryFilter, sortOption, committedMap]);
+
+  // Paginación
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, currentPage, pageSize]);
+
+  // Ajustar página si se sobrepasa
   useEffect(() => {
-    const unsubscribe = subscribeToOrders(
-      (liveOrders) => {
-        if (knownOrderIds.current) {
-          const newPending = liveOrders.find(
-            (o) => !knownOrderIds.current.has(o.id) && o.status === 'pendiente_preparacion'
-          );
-          if (newPending) {
-            playAlertBeep();
-            setNewOrderAlert(`Nuevo pedido #${newPending.orderId} recibido`);
-          }
-        }
-        knownOrderIds.current = new Set(liveOrders.map((o) => o.id));
-        setOrders(liveOrders);
-      },
-      (err) => setError(err.message)
-    );
-    return () => unsubscribe();
-  }, []);
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToAppointments(
-      (liveAppointments) => {
-        if (knownAppointmentIds.current) {
-          const newPending = liveAppointments.find(
-            (a) => !knownAppointmentIds.current.has(a.id) && a.status === 'pendiente'
-          );
-          if (newPending) {
-            playAlertBeep();
-            setNewOrderAlert(`Nueva solicitud de cita #${newPending.appointmentId} recibida`);
-          }
-        }
-        knownAppointmentIds.current = new Set(liveAppointments.map((a) => a.id));
-        setAppointments(liveAppointments);
-      },
-      (err) => setError(err.message)
-    );
-    return () => unsubscribe();
-  }, []);
+  const handleOrderStatus = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-  const pendingAppointmentsCount = useMemo(
-    () => appointments.filter((a) => a.status === 'pendiente').length,
-    [appointments]
-  );
-
-  const pendingCount = useMemo(
-    () => orders.filter((o) => o.status === 'pendiente_preparacion').length,
-    [orders]
-  );
-
-  const lowStockProducts = useMemo(
-    () => products.filter((p) => p.isActive && p.stock <= (p.minStockAlert ?? 0)),
-    [products]
-  );
+  const handleAppointmentStatus = async (appointmentId, newStatus) => {
+    try {
+      await updateAppointmentStatus(appointmentId, newStatus);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   const handleSaveStock = async (productId) => {
     const value = Number(editedStock[productId]);
     if (!Number.isFinite(value) || value < 0) return;
     try {
-      await adjustProductStock(productId, value, 'Ajuste manual — Panel Admin');
+      await updateProductFields(productId, { stock: value });
       setEditedStock((prev) => { const next = { ...prev }; delete next[productId]; return next; });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleQuickStockAdjust = async (productId, delta) => {
+    try {
+      await adjustProductStock(productId, delta);
     } catch (err) {
       setError(err.message);
     }
@@ -137,7 +166,7 @@ export function AdminDashboard({ userEmail }) {
 
   const handleSavePrice = async (productId) => {
     const value = Number(editedPrice[productId]);
-    if (!Number.isFinite(value) || value <= 0) return;
+    if (!Number.isFinite(value) || value < 0) return;
     try {
       await updateProductFields(productId, { price: value });
       setEditedPrice((prev) => { const next = { ...prev }; delete next[productId]; return next; });
@@ -188,7 +217,6 @@ export function AdminDashboard({ userEmail }) {
     setCsvError(null);
     setCsvImportResult(null);
     try {
-      // El export de Abarrotes PDV viene en latin1 (acentos/ñ se corrompen en UTF-8).
       const buffer = await file.arrayBuffer();
       const raw = new TextDecoder('iso-8859-1').decode(buffer);
       setCsvPreview(parseAbarrotesCsv(raw));
@@ -228,8 +256,6 @@ export function AdminDashboard({ userEmail }) {
     if (csvInputRef.current) csvInputRef.current.value = '';
   };
 
-  // Autocompleta la imagen al salir del campo código de barras o nombre, solo si el admin
-  // no ha puesto ya una manualmente — nunca sobreescribe una elección manual.
   const handleAutoFetchNewProductImage = async () => {
     if (newProduct.imageUrl) return;
     setIsFetchingNewProductImage(true);
@@ -249,8 +275,9 @@ export function AdminDashboard({ userEmail }) {
         ...newProduct,
         price: Number(newProduct.price),
         stock: Number(newProduct.stock),
-        vatRate: Number(newProduct.vatRate),
-        minStockAlert: Number(newProduct.minStockAlert)
+        minStockAlert: Number(newProduct.minStockAlert || 3),
+        vatRate: Number(newProduct.vatRate || 21),
+        isActive: true
       });
       setNewProduct(EMPTY_PRODUCT);
       setShowNewProduct(false);
@@ -259,98 +286,105 @@ export function AdminDashboard({ userEmail }) {
     }
   };
 
-  const handleOrderStatus = async (orderDocId, status) => {
-    try {
-      await updateOrderStatus(orderDocId, status);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleAppointmentStatus = async (appointmentDocId, status) => {
-    try {
-      await updateAppointmentStatus(appointmentDocId, status);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   const exportData = () => {
-    const payload = {
+    const data = {
       exportedAt: new Date().toISOString(),
       products,
       orders,
       appointments
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `jardin-vida-export-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
+    a.download = `jardin-vida-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
-    a.remove();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="posScreen">
-      <header className="posHeader">
-        <div className="posLoginBrand">
-          <Sprout size={24} />
-          <span>Panel de Administración</span>
-        </div>
-        <div className="posHeaderRight">
-          <a className="btn secondary" href="/">
-            <ArrowLeft size={18} /> Volver a la web
+    <div className="adminDashboard">
+      <header className="adminHeader">
+        <div className="adminHeaderLeft">
+          <a href="/" className="adminBackLink" title="Volver a la tienda">
+            <ArrowLeft size={18} />
           </a>
-          {pendingCount > 0 && (
-            <span className="adminPendingBadge">
-              <Bell size={14} /> {pendingCount} pedido{pendingCount > 1 ? 's' : ''}
-            </span>
-          )}
-          {pendingAppointmentsCount > 0 && (
-            <span className="adminPendingBadge">
-              <CalendarClock size={14} /> {pendingAppointmentsCount} cita{pendingAppointmentsCount > 1 ? 's' : ''}
-            </span>
-          )}
-          <span className="posUserBadge">{userEmail}</span>
-          <button className="btn secondary" onClick={logoutAdmin} aria-label="Cerrar sesión">
-            <LogOut size={18} /> Salir
-          </button>
+          <Sprout size={28} className="adminLogo" />
+          <div>
+            <h1>Panel de Control</h1>
+            <p className="adminSubtitle">El Jardín de la Vida · {userEmail}</p>
+          </div>
         </div>
+        <button className="btn secondary" onClick={logoutAdmin}>
+          <LogOut size={16} /> Cerrar sesión
+        </button>
       </header>
 
       {newOrderAlert && (
-        <div className="adminOrderAlert" role="alert" aria-live="assertive">
-          <Bell size={18} /> {newOrderAlert}
-          <button onClick={() => setNewOrderAlert(null)} aria-label="Descartar aviso">×</button>
-        </div>
+        <aside className="adminNewOrderBanner" role="alert">
+          <div className="adminNewOrderContent">
+            <Bell size={20} className="adminBellPulse" />
+            <div>
+              <strong>¡Nuevo pedido recibido!</strong>
+              <p>
+                #{newOrderAlert.orderId} · {newOrderAlert.customer?.name || 'Cliente'} · {newOrderAlert.total?.toFixed(2)}€
+              </p>
+            </div>
+          </div>
+          <div className="adminNewOrderActions">
+            <button className="btn primary small" onClick={() => { setTab('pedidos'); setNewOrderAlert(null); }}>
+              Ver pedidos
+            </button>
+            <button className="adminBannerClose" onClick={() => setNewOrderAlert(null)} aria-label="Cerrar aviso">
+              ×
+            </button>
+          </div>
+        </aside>
       )}
-
-      <nav className="adminTabs">
-        {TABS.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            className={`adminTabBtn ${tab === id ? 'active' : ''}`}
-            onClick={() => setTab(id)}
-          >
-            <Icon size={18} /> {label}
-          </button>
-        ))}
-      </nav>
 
       {error && (
-        <div className="formError adminInlineError" role="alert">
+        <div className="formError adminGlobalError" role="alert">
           {error}
+          <button onClick={() => setError(null)} aria-label="Cerrar error">×</button>
         </div>
       )}
 
-      <main className="adminMain">
+      <nav className="adminTabs" role="tablist">
+        {TABS.map((t) => {
+          const Icon = t.icon;
+          const count = t.id === 'catalogo'
+            ? products.length
+            : t.id === 'pedidos'
+              ? orders.length
+              : t.id === 'reservas'
+                ? appointments.length
+                : null;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={tab === t.id}
+              className={`adminTab ${tab === t.id ? 'active' : ''}`}
+              onClick={() => setTab(t.id)}
+            >
+              <Icon size={18} />
+              <span>{t.label}</span>
+              {count !== null && <span className="adminTabBadge">{count}</span>}
+            </button>
+          );
+        })}
+      </nav>
+
+      <main className="adminContent">
         {tab === 'catalogo' && (
           <section>
             <div className="adminSectionHeader">
-              <h2>Catálogo ({products.length})</h2>
+              <div>
+                <h2>Control de Stock y Catálogo</h2>
+                <p className="adminSectionDesc">
+                  Gestiona existencias, precios, alertas y reposiciones en tiempo real.
+                </p>
+              </div>
               <div className="adminSectionActions">
                 <button
                   className="btn secondary"
@@ -371,6 +405,41 @@ export function AdminDashboard({ userEmail }) {
                 </button>
               </div>
             </div>
+
+            {/* KPI Cards de Resumen de Stock */}
+            <InventoryKpiSummary
+              products={products}
+              committedMap={committedMap}
+              activeFilter={stockFilter}
+              onSelectFilter={(f) => {
+                setStockFilter(f);
+                setCurrentPage(1);
+              }}
+            />
+
+            {/* Barra de Filtros, Búsqueda y Ordenación */}
+            <CatalogFiltersBar
+              products={products}
+              searchQuery={searchQuery}
+              onSearchChange={(q) => {
+                setSearchQuery(q);
+                setCurrentPage(1);
+              }}
+              stockFilter={stockFilter}
+              onStockFilterChange={(f) => {
+                setStockFilter(f);
+                setCurrentPage(1);
+              }}
+              categoryFilter={categoryFilter}
+              onCategoryFilterChange={(c) => {
+                setCategoryFilter(c);
+                setCurrentPage(1);
+              }}
+              sortOption={sortOption}
+              onSortOptionChange={setSortOption}
+              totalFilteredCount={filteredProducts.length}
+              totalProductsCount={products.length}
+            />
 
             {csvImportResult && (
               <div className="adminLowStockNotice" role="status">
@@ -418,13 +487,6 @@ export function AdminDashboard({ userEmail }) {
               </div>
             )}
 
-            {lowStockProducts.length > 0 && (
-              <div className="adminLowStockNotice" role="status">
-                <Bell size={16} /> {lowStockProducts.length} producto{lowStockProducts.length > 1 ? 's' : ''} bajo mínimo:{' '}
-                {lowStockProducts.map((p) => p.name).join(', ')}
-              </div>
-            )}
-
             {showNewProduct && (
               <form className="adminNewProductForm" onSubmit={handleCreateProduct}>
                 <div className="formGrid">
@@ -460,9 +522,21 @@ export function AdminDashboard({ userEmail }) {
                       onBlur={handleAutoFetchNewProductImage} />
                   </div>
                   <div className="formGroup">
+                    <label>Stock Mínimo Alerta</label>
+                    <input type="number" min="0" value={newProduct.minStockAlert}
+                      onChange={(e) => setNewProduct({ ...newProduct, minStockAlert: e.target.value })} />
+                  </div>
+                </div>
+                <div className="formGrid">
+                  <div className="formGroup">
                     <label>Formato</label>
                     <input value={newProduct.format}
                       onChange={(e) => setNewProduct({ ...newProduct, format: e.target.value })} />
+                  </div>
+                  <div className="formGroup">
+                    <label>Procedencia / Origen</label>
+                    <input value={newProduct.origin}
+                      onChange={(e) => setNewProduct({ ...newProduct, origin: e.target.value })} />
                   </div>
                 </div>
                 <div className="formGroup">
@@ -498,147 +572,383 @@ export function AdminDashboard({ userEmail }) {
                     <th>Categoría</th>
                     <th>Precio</th>
                     <th>Precio anterior</th>
-                    <th>Stock</th>
+                    <th>Stock (Físico / Disp.)</th>
+                    <th>Ajuste Rápido</th>
                     <th>Visible</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => (
-                    <tr key={p.id} className={p.stock <= (p.minStockAlert ?? 0) ? 'adminLowStockRow' : ''}>
-                      <td>
-                        <div className="adminImageCell">
-                          <img
-                            className="adminImageThumb"
-                            src={p.imageUrl || getPlaceholderForCategory(p.category)}
-                            alt=""
-                          />
-                          <div className="adminImageCellActions">
-                            <button
-                              className="adminImageCellBtn"
-                              onClick={() => handleRefetchImage(p)}
-                              aria-label="Volver a buscar imagen automáticamente"
-                              title="Volver a buscar imagen automáticamente"
-                            >
-                              <RefreshCw size={12} />
-                            </button>
-                            <button
-                              className="adminImageCellBtn"
-                              onClick={() => setEditingImageId(editingImageId === p.id ? null : p.id)}
-                              aria-label="Poner imagen manualmente"
-                              title="Poner imagen manualmente"
-                            >
-                              <Pencil size={12} />
-                            </button>
-                          </div>
-                          {editingImageId === p.id && (
-                            <div className="adminImageUrlEdit">
-                              <input
-                                type="text"
-                                placeholder="https://..."
-                                value={editedImage[p.id] ?? p.imageUrl ?? ''}
-                                onChange={(e) => setEditedImage({ ...editedImage, [p.id]: e.target.value })}
-                              />
+                  {paginatedProducts.map((p) => {
+                    const minAlert = p.minStockAlert ?? 3;
+                    const stock = p.stock ?? 0;
+                    const committed = committedMap[p.id]?.committedQty || 0;
+                    const available = Math.max(0, stock - committed);
+
+                    let rowClass = '';
+                    if (stock === 0) rowClass = 'adminRowOutOfStock';
+                    else if (stock <= minAlert) rowClass = 'adminRowLowStock';
+
+                    return (
+                      <tr key={p.id} className={rowClass}>
+                        <td>
+                          <div className="adminImageCell">
+                            <img
+                              className="adminImageThumb"
+                              src={p.imageUrl || getPlaceholderForCategory(p.category)}
+                              alt=""
+                            />
+                            <div className="adminImageCellActions">
                               <button
-                                onClick={async () => { await handleSaveImage(p.id); setEditingImageId(null); }}
-                                aria-label="Guardar imagen"
+                                className="adminImageCellBtn"
+                                onClick={() => handleRefetchImage(p)}
+                                aria-label="Volver a buscar imagen automáticamente"
+                                title="Volver a buscar imagen automáticamente"
                               >
-                                <Save size={12} />
+                                <RefreshCw size={12} />
+                              </button>
+                              <button
+                                className="adminImageCellBtn"
+                                onClick={() => setEditingImageId(editingImageId === p.id ? null : p.id)}
+                                aria-label="Poner imagen manualmente"
+                                title="Poner imagen manualmente"
+                              >
+                                <Pencil size={12} />
                               </button>
                             </div>
-                          )}
-                        </div>
-                      </td>
-                      <td>{p.name}</td>
-                      <td>{p.category}</td>
-                      <td>
-                        <div className="adminInlineEdit">
-                          <input
-                            type="number" step="0.01" min="0"
-                            value={editedPrice[p.id] ?? p.price}
-                            onChange={(e) => setEditedPrice({ ...editedPrice, [p.id]: e.target.value })}
-                          />
-                          {editedPrice[p.id] !== undefined && Number(editedPrice[p.id]) !== p.price && (
-                            <button onClick={() => handleSavePrice(p.id)} aria-label="Guardar precio">
-                              <Save size={14} />
+                            {editingImageId === p.id && (
+                              <div className="adminImageUrlEdit">
+                                <input
+                                  type="text"
+                                  placeholder="https://..."
+                                  value={editedImage[p.id] ?? p.imageUrl ?? ''}
+                                  onChange={(e) => setEditedImage({ ...editedImage, [p.id]: e.target.value })}
+                                />
+                                <button
+                                  onClick={async () => { await handleSaveImage(p.id); setEditingImageId(null); }}
+                                  aria-label="Guardar imagen"
+                                >
+                                  <Save size={12} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="adminProductNameCell">
+                            <strong>{p.name}</strong>
+                            {p.barcode && <small className="adminProductBarcode">EAN: {p.barcode}</small>}
+                            {p.format && <small className="adminProductFormat">{p.format}</small>}
+                          </div>
+                        </td>
+                        <td>
+                          <span className="adminCategoryBadge">{p.category || 'General'}</span>
+                        </td>
+                        <td>
+                          <div className="adminInlineEdit">
+                            <input
+                              type="number" step="0.01" min="0"
+                              value={editedPrice[p.id] ?? p.price}
+                              onChange={(e) => setEditedPrice({ ...editedPrice, [p.id]: e.target.value })}
+                            />
+                            {editedPrice[p.id] !== undefined && Number(editedPrice[p.id]) !== p.price && (
+                              <button onClick={() => handleSavePrice(p.id)} aria-label="Guardar precio">
+                                <Save size={14} />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="adminInlineEdit">
+                            <input
+                              type="number" step="0.01" min="0"
+                              placeholder="—"
+                              value={editedOldPrice[p.id] ?? p.oldPrice ?? ''}
+                              onChange={(e) => setEditedOldPrice({ ...editedOldPrice, [p.id]: e.target.value })}
+                            />
+                            {editedOldPrice[p.id] !== undefined && editedOldPrice[p.id] !== (p.oldPrice ?? '') && (
+                              <button onClick={() => handleSaveOldPrice(p.id)} aria-label="Guardar precio anterior">
+                                <Save size={14} />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="adminStockCell">
+                            <div className="adminInlineEdit">
+                              <input
+                                type="number" min="0"
+                                value={editedStock[p.id] ?? p.stock}
+                                onChange={(e) => setEditedStock({ ...editedStock, [p.id]: e.target.value })}
+                                title="Editar stock físico total"
+                              />
+                              {editedStock[p.id] !== undefined && Number(editedStock[p.id]) !== p.stock && (
+                                <button onClick={() => handleSaveStock(p.id)} aria-label="Guardar stock">
+                                  <Save size={14} />
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Indicador de stock comprometido / disponible */}
+                            {committed > 0 ? (
+                              <button
+                                type="button"
+                                className="adminCommittedBtn"
+                                onClick={() => setSelectedCommittedProduct({ product: p, details: committedMap[p.id] })}
+                                title="Ver pedidos que comprometen este stock"
+                              >
+                                <ShoppingBag size={12} />
+                                <span><strong>{available}</strong> disp. ({committed} en pedidos)</span>
+                              </button>
+                            ) : (
+                              <span className={`adminStockStatusBadge ${stock === 0 ? 'badgeOut' : stock <= minAlert ? 'badgeLow' : 'badgeOk'}`}>
+                                {stock === 0 ? 'Agotado' : stock <= minAlert ? `Bajo (min ${minAlert})` : 'OK'}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="quickAddGroup">
+                            <button
+                              type="button"
+                              className="quickAddBtn"
+                              onClick={() => handleQuickStockAdjust(p.id, 1)}
+                              title="Añadir +1 ud"
+                            >
+                              +1
                             </button>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="adminInlineEdit">
-                          <input
-                            type="number" step="0.01" min="0"
-                            placeholder="—"
-                            value={editedOldPrice[p.id] ?? p.oldPrice ?? ''}
-                            onChange={(e) => setEditedOldPrice({ ...editedOldPrice, [p.id]: e.target.value })}
-                          />
-                          {editedOldPrice[p.id] !== undefined && editedOldPrice[p.id] !== (p.oldPrice ?? '') && (
-                            <button onClick={() => handleSaveOldPrice(p.id)} aria-label="Guardar precio anterior">
-                              <Save size={14} />
+                            <button
+                              type="button"
+                              className="quickAddBtn"
+                              onClick={() => handleQuickStockAdjust(p.id, 5)}
+                              title="Añadir +5 uds"
+                            >
+                              +5
                             </button>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="adminInlineEdit">
-                          <input
-                            type="number" min="0"
-                            value={editedStock[p.id] ?? p.stock}
-                            onChange={(e) => setEditedStock({ ...editedStock, [p.id]: e.target.value })}
-                          />
-                          {editedStock[p.id] !== undefined && Number(editedStock[p.id]) !== p.stock && (
-                            <button onClick={() => handleSaveStock(p.id)} aria-label="Guardar stock">
-                              <Save size={14} />
+                            <button
+                              type="button"
+                              className="quickAddBtn"
+                              onClick={() => handleQuickStockAdjust(p.id, 10)}
+                              title="Añadir +10 uds"
+                            >
+                              +10
                             </button>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <button
-                          className={`adminToggle ${p.isActive ? 'on' : 'off'}`}
-                          onClick={() => toggleActive(p)}
-                        >
-                          {p.isActive ? 'Visible' : 'Oculto'}
-                        </button>
+                          </div>
+                        </td>
+                        <td>
+                          <button
+                            className={`adminToggle ${p.isActive ? 'on' : 'off'}`}
+                            onClick={() => toggleActive(p)}
+                          >
+                            {p.isActive ? 'Visible' : 'Oculto'}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {paginatedProducts.length === 0 && (
+                    <tr>
+                      <td colSpan="8" className="adminEmptyTable">
+                        No se encontraron productos con los filtros y búsqueda actuales.
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Paginación */}
+            {filteredProducts.length > 0 && (
+              <div className="adminPaginationBar">
+                <div className="adminPaginationInfo">
+                  Mostrando {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, filteredProducts.length)} de {filteredProducts.length} productos
+                </div>
+
+                <div className="adminPaginationControls">
+                  <div className="adminPageSizeSelector">
+                    <label htmlFor="pageSizeSelect">Mostrar:</label>
+                    <select
+                      id="pageSizeSelect"
+                      value={pageSize}
+                      onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                    >
+                      <option value={25}>25 por pág.</option>
+                      <option value={50}>50 por pág.</option>
+                      <option value={100}>100 por pág.</option>
+                      <option value={500}>500 por pág.</option>
+                    </select>
+                  </div>
+
+                  <div className="adminPageNav">
+                    <button
+                      type="button"
+                      className="adminPageBtn"
+                      disabled={currentPage <= 1}
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      aria-label="Página anterior"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <span className="adminPageCurrent">
+                      Página <strong>{currentPage}</strong> de {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      className="adminPageBtn"
+                      disabled={currentPage >= totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      aria-label="Página siguiente"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modal de Detalle de Stock Comprometido */}
+            {selectedCommittedProduct && (
+              <div className="adminModalOverlay" onClick={() => setSelectedCommittedProduct(null)}>
+                <div className="adminModalContent" onClick={(e) => e.stopPropagation()}>
+                  <div className="adminModalHeader">
+                    <div className="adminModalTitleGroup">
+                      <ShoppingBag size={20} className="modalIcon" />
+                      <div>
+                        <h3>Pedidos con stock comprometido</h3>
+                        <p>{selectedCommittedProduct.product.name} · Stock físico: {selectedCommittedProduct.product.stock} uds</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="adminModalClose"
+                      onClick={() => setSelectedCommittedProduct(null)}
+                      aria-label="Cerrar modal"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <div className="adminModalBody">
+                    <div className="committedSummaryBanner">
+                      <div>
+                        <span className="committedSummaryLabel">Total comprometido:</span>
+                        <strong>{selectedCommittedProduct.details.committedQty} uds</strong>
+                      </div>
+                      <div>
+                        <span className="committedSummaryLabel">Disponible real:</span>
+                        <strong>{Math.max(0, (selectedCommittedProduct.product.stock || 0) - selectedCommittedProduct.details.committedQty)} uds</strong>
+                      </div>
+                    </div>
+
+                    <table className="committedOrdersTable">
+                      <thead>
+                        <tr>
+                          <th>Pedido</th>
+                          <th>Cliente</th>
+                          <th>Tipo entrega</th>
+                          <th>Cantidad</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedCommittedProduct.details.orders.map((o, idx) => (
+                          <tr key={`${o.orderId}-${idx}`}>
+                            <td><strong>#{o.orderId}</strong></td>
+                            <td>{o.customerName}</td>
+                            <td>
+                              <span className={`adminSourceBadge ${o.shippingMethod === 'recogida' ? 'tienda_tpv' : ''}`}>
+                                {o.shippingMethod === 'recogida' ? 'Recogida tienda' : 'Envío domicilio'}
+                              </span>
+                            </td>
+                            <td><span className="badgeQuantity">{o.quantity} uds</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="adminModalFooter">
+                    <button
+                      type="button"
+                      className="btn primary"
+                      onClick={() => {
+                        setSelectedCommittedProduct(null);
+                        setTab('pedidos');
+                      }}
+                    >
+                      Ir a gestionar pedidos
+                    </button>
+                    <button
+                      type="button"
+                      className="btn secondary"
+                      onClick={() => setSelectedCommittedProduct(null)}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         )}
 
         {tab === 'pedidos' && (
           <section>
-            <h2>Pedidos recientes ({orders.length})</h2>
+            <div className="adminSectionHeader">
+              <div>
+                <h2>Gestión de Pedidos ({orders.length})</h2>
+                <p className="adminSectionDesc">
+                  Priorización inteligente: pedidos de recogida inmediata y envíos urgentes destacados.
+                </p>
+              </div>
+            </div>
+
             <div className="adminOrdersList">
-              {orders.map((order) => (
-                <article key={order.id} className={`adminOrderCard status-${order.status}`}>
-                  <div className="adminOrderCardHeader">
-                    <strong>#{order.orderId}</strong>
-                    <span className={`adminSourceBadge ${order.source}`}>
-                      {order.source === 'tienda_tpv' ? 'TPV mostrador' : 'Web online'}
-                    </span>
-                    <span className="adminOrderStatus">{order.status}</span>
-                  </div>
-                  <div className="adminOrderCardBody">
-                    <span>{order.customer?.name || 'Venta de mostrador'}</span>
-                    <span>{order.items.length} artículo{order.items.length > 1 ? 's' : ''}</span>
-                    <span>{order.total.toFixed(2)}€</span>
-                  </div>
-                  {order.status === 'pendiente_preparacion' && (
-                    <div className="adminOrderActions">
-                      <button className="btn primary" onClick={() => handleOrderStatus(order.id, 'completado')}>
-                        <CheckCircle2 size={16} /> Marcar completado
-                      </button>
-                      <button className="btn secondary" onClick={() => handleOrderStatus(order.id, 'cancelado')}>
-                        <XCircle size={16} /> Cancelar
-                      </button>
+              {orders.map((order) => {
+                const isUrgent = order.shippingMethod === 'recogida' || order.deliveryMethod === 'recogida';
+                return (
+                  <article
+                    key={order.id}
+                    className={`adminOrderCard status-${order.status} ${order.status === 'pendiente_preparacion' && isUrgent ? 'cardUrgentHighlight' : ''}`}
+                  >
+                    <div className="adminOrderCardHeader">
+                      <div className="adminOrderHeaderLeft">
+                        <strong>#{order.orderId}</strong>
+                        <span className={`adminSourceBadge ${order.source}`}>
+                          {order.source === 'tienda_tpv' ? 'TPV mostrador' : 'Web online'}
+                        </span>
+                        <span className="adminOrderStatus">{order.status}</span>
+                      </div>
+                      <OrderUrgencyBadge order={order} />
                     </div>
-                  )}
-                </article>
-              ))}
+                    <div className="adminOrderCardBody">
+                      <span><strong>Cliente:</strong> {order.customer?.name || 'Venta de mostrador'}</span>
+                      <span><strong>Artículos:</strong> {order.items?.length || 0} artículo{(order.items?.length || 0) > 1 ? 's' : ''}</span>
+                      <span><strong>Total:</strong> {order.total?.toFixed(2)}€</span>
+                    </div>
+
+                    {order.items && order.items.length > 0 && (
+                      <div className="adminOrderItemsBreakdown">
+                        <small>
+                          {order.items.map((it) => `${it.quantity || 1}x ${it.name}`).join(' · ')}
+                        </small>
+                      </div>
+                    )}
+
+                    {order.status === 'pendiente_preparacion' && (
+                      <div className="adminOrderActions">
+                        <button className="btn primary" onClick={() => handleOrderStatus(order.id, 'completado')}>
+                          <CheckCircle2 size={16} /> Marcar completado
+                        </button>
+                        <button className="btn secondary" onClick={() => handleOrderStatus(order.id, 'cancelado')}>
+                          <XCircle size={16} /> Cancelar
+                        </button>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
               {orders.length === 0 && <p className="posEmptyTicket">Todavía no hay pedidos.</p>}
             </div>
           </section>
